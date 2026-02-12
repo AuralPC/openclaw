@@ -2,7 +2,17 @@
   "permissions": {
     "allow": [
       "Bash(ls:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(wc:*)",
+      "WebSearch",
+      "WebFetch(domain:crontab.guru)",
+      "WebFetch(domain:colorhero.io)",
+      "WebFetch(domain:octet.design)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:arwes.dev)",
+      "WebFetch(domain:fuselabcreative.com)",
+      "WebFetch(domain:medium.com)"
     ]
   }
 }

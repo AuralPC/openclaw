@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw - 执行记录</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle" onclick="toggleSidebar()" title="折叠侧边栏">◀</div>
+    <div class="sidebar-header">
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab" data-tab="chats" onclick="switchSidebarTab('chats')">会话</button>
+        <button class="sidebar-tab active" data-tab="tasks" onclick="switchSidebarTab('tasks')">任务</button>
+      </div>
+      <div class="sidebar-actions">
+        <div class="action-row" id="chatActions" style="display:none">
+          <button class="sidebar-btn" onclick="location.href='chat.html'">＋ 新聊天</button>
+          <button class="sidebar-btn" onclick="location.href='files.html'">📂 文件</button>
+        </div>
+        <div class="action-row" id="taskActions">
+          <button class="sidebar-btn" onclick="location.href='task-config.html'">＋ 新任务</button>
+        </div>
+      </div>
+      <div class="sidebar-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="搜索任务...">
+      </div>
+    </div>
+    <div class="sidebar-content">
+      <div class="sidebar-tab-pane" id="sidebar-chats">
+        <div class="sidebar-section" id="section-pinned">
+          <div class="sidebar-section-header"><span>📌 置顶</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="project" data-pinned="true" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">项目方案讨论</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-recent">
+          <div class="sidebar-section-header"><span>💬 最近</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue3" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 学习路线</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="debug" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">API 调试帮助</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="python" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Python 数据分析</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-work">
+          <div class="sidebar-section-header"><span>📁 工作</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="review" data-folder="work" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">代码审查</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-learn">
+          <div class="sidebar-section-header"><span>📁 学习</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue-note" data-folder="learn" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 笔记</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="algo" data-folder="learn" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">算法练习</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="add-folder-btn" onclick="createSidebarFolder()">＋ 新建文件夹</div>
+        <div class="sidebar-section collapsed" id="section-archive">
+          <div class="sidebar-section-header"><span>🗄️ 归档</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="old" data-archived="true" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">旧项目讨论</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-tab-pane active" id="sidebar-tasks">
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🔔 有更新</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item active" data-session="daily" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">每日新闻摘要</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🟢 运行中</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="weekly" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">周报整理</span>
+              <span class="item-badge indicator-dot indicator-dot-pulse"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>⏸ 已暂停</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="backup" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">数据库备份</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section collapsed">
+          <div class="sidebar-section-header"><span>❌ 已取消</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="report" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">月度报告生成</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-area" onclick="showDropdown(this, [{icon:'⚙️',label:'设置',action:function(){location.href='settings.html'}},{divider:true},{icon:'🚪',label:'退出登录',danger:true,action:function(){location.href='login.html'}}])">
+        <div class="user-avatar">张</div>
+        <div class="user-info"><div class="user-name">张三</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-title">
+        <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+        <span>每日新闻摘要</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" title="任务配置" onclick="location.href='task-config.html'">⚙️</button>
+      </div>
+    </div>
+
+    <div class="task-records" id="taskRecords">
+      <!-- Record 1 - Success -->
+      <div class="task-record" onclick="toggleRecord(this)">
+        <div class="task-record-header">
+          <div>
+            <span class="task-record-time">2025-02-10 08:00</span>
+          </div>
+          <span class="badge badge-success">成功 ✓</span>
+        </div>
+        <div class="task-record-body">
+          <div class="task-record-content md-content">
+            <h4>2025-02-10 科技新闻摘要</h4>
+            <p>今天的科技圈有以下重要动态：</p>
+            <ol>
+              <li><strong>OpenAI 发布 GPT-5</strong> — 新模型在推理能力和多模态方面有重大突破，支持实时视频理解</li>
+              <li><strong>苹果发布 Vision Pro 2</strong> — 重量减轻 40%，售价降至 $2,499，支持更多企业应用场景</li>
+              <li><strong>Rust 1.85 稳定版发布</strong> — 引入异步闭包支持和改进的编译速度，社区反响积极</li>
+              <li><strong>中国量子计算突破</strong> — 中科院团队实现 1000 量子比特纠缠，刷新世界纪录</li>
+            </ol>
+            <p><strong>技术趋势观察：</strong>AI Agent 和自动化工作流成为各大厂的重点投入方向，预计 2025 年将有更多 Agent 产品落地。</p>
+            <blockquote>评论：今天的新闻整体偏利好，特别是 AI 和量子计算领域的进展值得密切关注。</blockquote>
+          </div>
+        </div>
+      </div>
+
+      <!-- Record 2 - Success -->
+      <div class="task-record" onclick="toggleRecord(this)">
+        <div class="task-record-header">
+          <div>
+            <span class="task-record-time">2025-02-09 08:00</span>
+          </div>
+          <span class="badge badge-success">成功 ✓</span>
+        </div>
+        <div class="task-record-body">
+          <div class="task-record-content md-content">
+            <h4>2025-02-09 科技新闻摘要</h4>
+            <p>今天的科技动态如下：</p>
+            <ol>
+              <li><strong>Google Gemini 2.0 更新</strong> — 新增代码生成和调试能力，性能提升显著</li>
+              <li><strong>特斯拉 FSD V13 推送</strong> — 全球范围内开始推送，欧洲市场首次可用</li>
+              <li><strong>GitHub Copilot 企业版降价</strong> — 月费从 $39 降至 $19，进一步普及 AI 编程助手</li>
+            </ol>
+            <p><strong>趋势：</strong>AI 编程工具的竞争日趋激烈，开发者受益最大。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Record 3 - Failed -->
+      <div class="task-record" onclick="toggleRecord(this)">
+        <div class="task-record-header">
+          <div>
+            <span class="task-record-time">2025-02-08 08:00</span>
+          </div>
+          <span class="badge badge-error">失败 ✗</span>
+        </div>
+        <div class="task-record-body">
+          <div class="task-record-content">
+            <p style="color:var(--error);">❌ 错误：网络连接超时，无法访问搜索服务。请检查网络连接或稍后重试。</p>
+            <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">错误代码: ETIMEDOUT | 重试次数: 3/3</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="manual-execute-btn">
+        <button class="btn btn-secondary btn-lg" id="manualExecBtn" onclick="manualExecute()">▶ 手动执行一次</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/interactions.js"></script>
+<script>
+  function toggleRecord(record) {
+    record.classList.toggle('expanded');
+  }
+
+  function manualExecute() {
+    var btn = document.getElementById('manualExecBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+    btn.textContent = '';
+
+    setTimeout(function() {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      btn.textContent = '▶ 手动执行一次';
+
+      // Add new record at top
+      var records = document.getElementById('taskRecords');
+      var newRecord = document.createElement('div');
+      newRecord.className = 'task-record expanded slide-up';
+      newRecord.onclick = function() { toggleRecord(newRecord); };
+      newRecord.innerHTML =
+        '<div class="task-record-header">' +
+          '<div><span class="task-record-time">刚刚执行</span></div>' +
+          '<span class="badge badge-success">成功 ✓</span>' +
+        '</div>' +
+        '<div class="task-record-body" style="max-height:500px;border-top-width:1px;">' +
+          '<div class="task-record-content md-content">' +
+            '<h4>手动执行结果</h4>' +
+            '<p>已完成今日科技新闻搜索和整理：</p>' +
+            '<ol>' +
+              '<li><strong>Claude 4 发布</strong> — Anthropic 发布最新大语言模型，在安全性和推理方面领先</li>' +
+              '<li><strong>React 20 发布</strong> — 引入革命性的编译器优化，性能提升 3 倍</li>' +
+            '</ol>' +
+            '<p><em>（手动执行完成）</em></p>' +
+          '</div>' +
+        '</div>';
+
+      records.insertBefore(newRecord, records.firstChild);
+      showToast('执行完成', 'success');
+    }, 2000);
+  }
+</script>
+
+</body>
+</html>

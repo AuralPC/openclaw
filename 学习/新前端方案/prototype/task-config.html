@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw - 任务配置</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle" onclick="toggleSidebar()" title="折叠侧边栏">◀</div>
+    <div class="sidebar-header">
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab" data-tab="chats" onclick="switchSidebarTab('chats')">会话</button>
+        <button class="sidebar-tab active" data-tab="tasks" onclick="switchSidebarTab('tasks')">任务</button>
+      </div>
+      <div class="sidebar-actions">
+        <div class="action-row" id="chatActions" style="display:none">
+          <button class="sidebar-btn" onclick="location.href='chat.html'">＋ 新聊天</button>
+          <button class="sidebar-btn" onclick="location.href='files.html'">📂 文件</button>
+        </div>
+        <div class="action-row" id="taskActions">
+          <button class="sidebar-btn" onclick="location.href='task-config.html'">＋ 新任务</button>
+        </div>
+      </div>
+      <div class="sidebar-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="搜索任务...">
+      </div>
+    </div>
+    <div class="sidebar-content">
+      <div class="sidebar-tab-pane" id="sidebar-chats">
+        <div class="sidebar-section" id="section-pinned">
+          <div class="sidebar-section-header"><span>📌 置顶</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="project" data-pinned="true" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">项目方案讨论</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-recent">
+          <div class="sidebar-section-header"><span>💬 最近</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue3" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 学习路线</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="debug" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">API 调试帮助</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="python" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Python 数据分析</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-work">
+          <div class="sidebar-section-header"><span>📁 工作</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="review" data-folder="work" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">代码审查</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-learn">
+          <div class="sidebar-section-header"><span>📁 学习</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue-note" data-folder="learn" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 笔记</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="algo" data-folder="learn" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">算法练习</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="add-folder-btn" onclick="createSidebarFolder()">＋ 新建文件夹</div>
+        <div class="sidebar-section collapsed" id="section-archive">
+          <div class="sidebar-section-header"><span>🗄️ 归档</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="old" data-archived="true" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">旧项目讨论</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-tab-pane active" id="sidebar-tasks">
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🔔 有更新</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item active" data-session="daily" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">每日新闻摘要</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🟢 运行中</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="weekly" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">周报整理</span>
+              <span class="item-badge indicator-dot indicator-dot-pulse"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>⏸ 已暂停</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="backup" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">数据库备份</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section collapsed">
+          <div class="sidebar-section-header"><span>❌ 已取消</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="report" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">月度报告生成</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-area" onclick="showDropdown(this, [{icon:'⚙️',label:'设置',action:function(){location.href='settings.html'}},{divider:true},{icon:'🚪',label:'退出登录',danger:true,action:function(){location.href='login.html'}}])">
+        <div class="user-avatar">张</div>
+        <div class="user-info"><div class="user-name">张三</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-title">
+        <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+        <span>每日新闻摘要</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn active" title="任务配置">⚙️</button>
+      </div>
+    </div>
+
+    <div class="task-config-form">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">任务配置</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">任务名称</label>
+          <input type="text" class="form-input" id="taskName" value="每日新闻摘要">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">执行周期</label>
+          <div class="cron-builder" id="cronBuilder">
+
+            <!-- Summary: natural language + cron expression -->
+            <div class="cron-summary">
+              <div class="cron-summary-text" id="cronDesc">每天 08:00 执行</div>
+              <div class="cron-summary-expr">
+                <span class="cron-expr-label">Cron</span>
+                <code class="cron-expr-value" id="cronValue">0 8 * * *</code>
+              </div>
+            </div>
+
+            <!-- Quick presets -->
+            <div class="cron-section">
+              <div class="cron-section-label">快速选择</div>
+              <div class="cron-presets" id="cronPresets">
+                <button class="cron-preset" onclick="applyPreset('0 * * * *')">每小时整点</button>
+                <button class="cron-preset active" onclick="applyPreset('0 8 * * *')">每天 08:00</button>
+                <button class="cron-preset" onclick="applyPreset('0 9 * * 1-5')">工作日 09:00</button>
+                <button class="cron-preset" onclick="applyPreset('0 9 * * 1')">每周一 09:00</button>
+                <button class="cron-preset" onclick="applyPreset('0 9 1 * *')">每月 1 日</button>
+                <button class="cron-preset" onclick="applyPreset('0 20 * * *')">每晚 20:00</button>
+              </div>
+            </div>
+
+            <div class="cron-divider"></div>
+
+            <!-- Frequency tabs -->
+            <div class="cron-section">
+              <div class="cron-section-label">自定义</div>
+              <div class="cron-freq-tabs" id="freqTabs">
+                <button class="cron-freq-tab" data-freq="hourly" onclick="setFreq('hourly')">每小时</button>
+                <button class="cron-freq-tab active" data-freq="daily" onclick="setFreq('daily')">每天</button>
+                <button class="cron-freq-tab" data-freq="weekly" onclick="setFreq('weekly')">每周</button>
+                <button class="cron-freq-tab" data-freq="monthly" onclick="setFreq('monthly')">每月</button>
+              </div>
+            </div>
+
+            <!-- Hourly -->
+            <div class="cron-fields" id="detailHourly" style="display:none;">
+              <div class="cron-field-row">
+                <span class="cron-label">在第</span>
+                <select class="form-select cron-select-sm" id="cronMinuteH">
+                  <option value="0" selected>0</option><option value="5">5</option><option value="10">10</option>
+                  <option value="15">15</option><option value="20">20</option><option value="25">25</option>
+                  <option value="30">30</option><option value="35">35</option><option value="40">40</option>
+                  <option value="45">45</option><option value="50">50</option><option value="55">55</option>
+                </select>
+                <span class="cron-label">分钟执行</span>
+              </div>
+            </div>
+
+            <!-- Daily -->
+            <div class="cron-fields" id="detailDaily">
+              <div class="cron-field-row">
+                <span class="cron-label">执行时间</span>
+                <div class="cron-time-picker">
+                  <select class="form-select cron-time-sel" id="cronHourD"></select>
+                  <span class="cron-time-colon">:</span>
+                  <select class="form-select cron-time-sel" id="cronMinuteD"></select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Weekly -->
+            <div class="cron-fields" id="detailWeekly" style="display:none;">
+              <div class="cron-field-row">
+                <span class="cron-label">重复日</span>
+                <div class="cron-weekdays" id="cronWeekdays">
+                  <label class="cron-day"><input type="checkbox" value="1" checked><span>一</span></label>
+                  <label class="cron-day"><input type="checkbox" value="2"><span>二</span></label>
+                  <label class="cron-day"><input type="checkbox" value="3"><span>三</span></label>
+                  <label class="cron-day"><input type="checkbox" value="4"><span>四</span></label>
+                  <label class="cron-day"><input type="checkbox" value="5"><span>五</span></label>
+                  <label class="cron-day"><input type="checkbox" value="6"><span>六</span></label>
+                  <label class="cron-day"><input type="checkbox" value="0"><span>日</span></label>
+                </div>
+              </div>
+              <div class="cron-field-row">
+                <span class="cron-label">执行时间</span>
+                <div class="cron-time-picker">
+                  <select class="form-select cron-time-sel" id="cronHourW"></select>
+                  <span class="cron-time-colon">:</span>
+                  <select class="form-select cron-time-sel" id="cronMinuteW"></select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Monthly -->
+            <div class="cron-fields" id="detailMonthly" style="display:none;">
+              <div class="cron-field-row">
+                <span class="cron-label">日期</span>
+                <span class="cron-label-inline">每月第</span>
+                <select class="form-select cron-select-sm" id="cronDayM"></select>
+                <span class="cron-label-inline">日</span>
+              </div>
+              <div class="cron-field-row">
+                <span class="cron-label">执行时间</span>
+                <div class="cron-time-picker">
+                  <select class="form-select cron-time-sel" id="cronHourM"></select>
+                  <span class="cron-time-colon">:</span>
+                  <select class="form-select cron-time-sel" id="cronMinuteM"></select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Advanced: direct cron input -->
+            <div class="cron-advanced-bar">
+              <button class="cron-advanced-toggle" onclick="toggleAdvanced()" id="advancedToggle">
+                <span class="cron-adv-icon">⌨</span> 手动编辑表达式
+                <span class="cron-adv-arrow" id="advArrow">›</span>
+              </button>
+            </div>
+            <div class="cron-advanced" id="cronAdvanced" style="display:none;">
+              <div class="cron-direct-wrap">
+                <div class="cron-direct-fields">
+                  <div class="cron-direct-col"><label>分</label><input type="text" id="cdMin" value="0" oninput="onDirectEdit()"></div>
+                  <div class="cron-direct-col"><label>时</label><input type="text" id="cdHour" value="8" oninput="onDirectEdit()"></div>
+                  <div class="cron-direct-col"><label>日</label><input type="text" id="cdDom" value="*" oninput="onDirectEdit()"></div>
+                  <div class="cron-direct-col"><label>月</label><input type="text" id="cdMon" value="*" oninput="onDirectEdit()"></div>
+                  <div class="cron-direct-col"><label>星期</label><input type="text" id="cdDow" value="*" oninput="onDirectEdit()"></div>
+                </div>
+                <div class="cron-direct-hint">
+                  <span>* = 任意</span><span>1,3,5 = 列表</span><span>1-5 = 范围</span><span>*/5 = 间隔</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">执行内容（发送给 AI 的指令）</label>
+          <textarea class="form-textarea" id="taskContent" rows="5">搜索今天的科技新闻，整理成摘要。包括：
+1. 今日重要新闻标题和一句话摘要
+2. 值得关注的技术趋势
+3. 你的简短评论
+
+用中文回复，格式清晰。</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="taskStatus" value="active" checked> 启用
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="taskStatus" value="paused"> 暂停
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg" onclick="saveConfig()" id="saveBtn">保存配置</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/interactions.js"></script>
+<script>
+  /* ========== Cron Builder ========== */
+
+  var currentFreq = 'daily';
+
+  // Populate <select> options
+  function fillSelect(id, start, end, pad) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    for (var i = start; i <= end; i++) {
+      var opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = pad && i < 10 ? '0' + i : '' + i;
+      sel.appendChild(opt);
+    }
+  }
+
+  fillSelect('cronHourD', 0, 23, true);
+  fillSelect('cronMinuteD', 0, 59, true);
+  fillSelect('cronHourW', 0, 23, true);
+  fillSelect('cronMinuteW', 0, 59, true);
+  fillSelect('cronHourM', 0, 23, true);
+  fillSelect('cronMinuteM', 0, 59, true);
+  fillSelect('cronDayM', 1, 31, false);
+
+  // Set defaults
+  document.getElementById('cronHourD').value = '8';
+  document.getElementById('cronMinuteD').value = '0';
+  document.getElementById('cronHourW').value = '9';
+  document.getElementById('cronMinuteW').value = '0';
+  document.getElementById('cronHourM').value = '9';
+  document.getElementById('cronMinuteM').value = '0';
+
+  // Listen for changes
+  document.querySelectorAll('.cron-builder select, .cron-builder input[type="checkbox"]').forEach(function(el) {
+    el.addEventListener('change', function() { updateCron(); clearPresetHighlight(); });
+  });
+
+  /* -- Presets -- */
+  function applyPreset(cron) {
+    // Highlight preset button
+    document.querySelectorAll('.cron-preset').forEach(function(b) { b.classList.remove('active'); });
+    event.target.classList.add('active');
+
+    var p = cron.split(/\s+/);
+    // Determine freq and set UI
+    if (p[2] !== '*') {
+      setFreq('monthly');
+      document.getElementById('cronDayM').value = p[2];
+      document.getElementById('cronHourM').value = p[1];
+      document.getElementById('cronMinuteM').value = p[0];
+    } else if (p[4] !== '*') {
+      setFreq('weekly');
+      // Set weekday checkboxes
+      var days = expandRange(p[4]);
+      document.querySelectorAll('#cronWeekdays input').forEach(function(cb) {
+        cb.checked = days.indexOf(parseInt(cb.value)) !== -1;
+      });
+      document.getElementById('cronHourW').value = p[1];
+      document.getElementById('cronMinuteW').value = p[0];
+      updateCron();
+    } else if (p[1] === '*') {
+      setFreq('hourly');
+      document.getElementById('cronMinuteH').value = p[0];
+      updateCron();
+    } else {
+      setFreq('daily');
+      document.getElementById('cronHourD').value = p[1];
+      document.getElementById('cronMinuteD').value = p[0];
+      updateCron();
+    }
+  }
+
+  function expandRange(s) {
+    // "1-5" → [1,2,3,4,5], "1,3" → [1,3]
+    var result = [];
+    s.split(',').forEach(function(part) {
+      if (part.indexOf('-') !== -1) {
+        var ends = part.split('-');
+        for (var i = parseInt(ends[0]); i <= parseInt(ends[1]); i++) result.push(i);
+      } else {
+        result.push(parseInt(part));
+      }
+    });
+    return result;
+  }
+
+  function clearPresetHighlight() {
+    document.querySelectorAll('.cron-preset').forEach(function(b) { b.classList.remove('active'); });
+  }
+
+  /* -- Frequency tabs -- */
+  function setFreq(freq) {
+    currentFreq = freq;
+    document.querySelectorAll('.cron-freq-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelector('[data-freq="' + freq + '"]').classList.add('active');
+    document.getElementById('detailHourly').style.display = freq === 'hourly' ? '' : 'none';
+    document.getElementById('detailDaily').style.display = freq === 'daily' ? '' : 'none';
+    document.getElementById('detailWeekly').style.display = freq === 'weekly' ? '' : 'none';
+    document.getElementById('detailMonthly').style.display = freq === 'monthly' ? '' : 'none';
+    clearPresetHighlight();
+    updateCron();
+  }
+
+  /* -- Build cron from UI -- */
+  function updateCron() {
+    var cron = '', desc = '';
+    var weekNames = ['日', '一', '二', '三', '四', '五', '六'];
+
+    if (currentFreq === 'hourly') {
+      var m = document.getElementById('cronMinuteH').value;
+      cron = m + ' * * * *';
+      desc = '每小时第 ' + m + ' 分钟执行';
+    } else if (currentFreq === 'daily') {
+      var h = document.getElementById('cronHourD').value;
+      var m = document.getElementById('cronMinuteD').value;
+      cron = m + ' ' + h + ' * * *';
+      desc = '每天 ' + pad2(h) + ':' + pad2(m) + ' 执行';
+    } else if (currentFreq === 'weekly') {
+      var h = document.getElementById('cronHourW').value;
+      var m = document.getElementById('cronMinuteW').value;
+      var days = [];
+      document.querySelectorAll('#cronWeekdays input:checked').forEach(function(cb) { days.push(cb.value); });
+      if (days.length === 0) days = ['*'];
+      cron = m + ' ' + h + ' * * ' + days.join(',');
+      if (days[0] === '*') {
+        desc = '每天 ' + pad2(h) + ':' + pad2(m) + ' 执行';
+      } else {
+        var dn = days.map(function(d) { return '周' + weekNames[parseInt(d)]; });
+        desc = '每' + dn.join('、') + ' ' + pad2(h) + ':' + pad2(m) + ' 执行';
+      }
+    } else if (currentFreq === 'monthly') {
+      var d = document.getElementById('cronDayM').value;
+      var h = document.getElementById('cronHourM').value;
+      var m = document.getElementById('cronMinuteM').value;
+      cron = m + ' ' + h + ' ' + d + ' * *';
+      desc = '每月 ' + d + ' 日 ' + pad2(h) + ':' + pad2(m) + ' 执行';
+    }
+
+    setCronDisplay(cron, desc);
+    syncDirectFields(cron);
+  }
+
+  function pad2(n) { return (parseInt(n) < 10 ? '0' : '') + parseInt(n); }
+
+  function setCronDisplay(cron, desc) {
+    document.getElementById('cronValue').textContent = cron;
+    document.getElementById('cronDesc').textContent = desc;
+  }
+
+  function syncDirectFields(cron) {
+    var p = cron.split(/\s+/);
+    if (p.length === 5) {
+      document.getElementById('cdMin').value = p[0];
+      document.getElementById('cdHour').value = p[1];
+      document.getElementById('cdDom').value = p[2];
+      document.getElementById('cdMon').value = p[3];
+      document.getElementById('cdDow').value = p[4];
+    }
+  }
+
+  /* -- Advanced toggle -- */
+  function toggleAdvanced() {
+    var adv = document.getElementById('cronAdvanced');
+    var arrow = document.getElementById('advArrow');
+    if (adv.style.display === 'none') {
+      adv.style.display = '';
+      arrow.classList.add('open');
+    } else {
+      adv.style.display = 'none';
+      arrow.classList.remove('open');
+    }
+  }
+
+  /* -- Direct field editing -- */
+  function onDirectEdit() {
+    var cron = [
+      document.getElementById('cdMin').value.trim() || '*',
+      document.getElementById('cdHour').value.trim() || '*',
+      document.getElementById('cdDom').value.trim() || '*',
+      document.getElementById('cdMon').value.trim() || '*',
+      document.getElementById('cdDow').value.trim() || '*'
+    ].join(' ');
+
+    var desc = describeCron(cron.split(/\s+/));
+    setCronDisplay(cron, desc);
+    clearPresetHighlight();
+  }
+
+  function describeCron(p) {
+    var weekNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+    var min = p[0], hour = p[1], dom = p[2], mon = p[3], dow = p[4];
+
+    if (dom === '*' && mon === '*' && dow === '*') {
+      if (hour === '*') return '每小时第 ' + min + ' 分钟执行';
+      return '每天 ' + pad2(hour) + ':' + pad2(min) + ' 执行';
+    }
+    if (dom === '*' && mon === '*' && dow !== '*') {
+      var days = dow.split(',').map(function(d) {
+        if (d.indexOf('-') !== -1) {
+          var ends = d.split('-');
+          var names = [];
+          for (var i = parseInt(ends[0]); i <= parseInt(ends[1]); i++) names.push(weekNames[i] || i);
+          return names.join('~');
+        }
+        return weekNames[parseInt(d)] || d;
+      });
+      return '每' + days.join('、') + ' ' + pad2(hour) + ':' + pad2(min) + ' 执行';
+    }
+    if (dom !== '*' && mon === '*' && dow === '*') {
+      return '每月 ' + dom + ' 日 ' + pad2(hour) + ':' + pad2(min) + ' 执行';
+    }
+    return min + ' ' + hour + ' ' + dom + ' ' + mon + ' ' + dow;
+  }
+
+  // Init
+  updateCron();
+
+  function saveConfig() {
+    var btn = document.getElementById('saveBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    setTimeout(function() {
+      showToast('任务配置已保存', 'success');
+      setTimeout(function() {
+        location.href = 'task-history.html';
+      }, 500);
+    }, 800);
+  }
+</script>
+
+</body>
+</html>

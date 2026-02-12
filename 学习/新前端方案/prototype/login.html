@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw - 登录</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">🐾</div>
+      <h1>OpenClaw</h1>
+      <p>登录你的账户</p>
+    </div>
+
+    <div class="auth-error" id="authError">用户名或密码错误，请重试</div>
+
+    <form class="auth-form" id="loginForm" onsubmit="return false;">
+      <div class="form-group">
+        <label class="form-label">邮箱 / 用户名</label>
+        <input type="text" class="form-input" id="loginEmail" placeholder="请输入邮箱或用户名" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">密码</label>
+        <input type="password" class="form-input" id="loginPassword" placeholder="请输入密码" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginBtn">登 录</button>
+    </form>
+
+    <div class="auth-footer">
+      没有账号？<a href="register.html">去注册</a>
+    </div>
+  </div>
+
+  <script src="js/interactions.js"></script>
+  <script>
+    var form = document.getElementById('loginForm');
+    var btn = document.getElementById('loginBtn');
+    var emailInput = document.getElementById('loginEmail');
+    var passwordInput = document.getElementById('loginPassword');
+    var authError = document.getElementById('authError');
+
+    function doLogin() {
+      var password = passwordInput.value;
+
+      // Simulate error case
+      if (password === 'error') {
+        authError.classList.add('visible');
+        passwordInput.classList.add('error');
+        return;
+      }
+
+      authError.classList.remove('visible');
+      passwordInput.classList.remove('error');
+
+      // Loading state
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      setTimeout(function() {
+        window.location.href = 'chat.html';
+      }, 1000);
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      doLogin();
+    });
+
+    // Enter key support
+    passwordInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        doLogin();
+      }
+    });
+    emailInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        passwordInput.focus();
+      }
+    });
+
+    // Clear error on input
+    passwordInput.addEventListener('input', function() {
+      authError.classList.remove('visible');
+      passwordInput.classList.remove('error');
+    });
+  </script>
+</body>
+</html>

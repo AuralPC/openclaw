@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw - 聊天</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle" onclick="toggleSidebar()" title="折叠侧边栏">◀</div>
+
+    <div class="sidebar-header">
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab active" data-tab="chats" onclick="switchSidebarTab('chats')">会话</button>
+        <button class="sidebar-tab" data-tab="tasks" onclick="switchSidebarTab('tasks')">任务</button>
+      </div>
+      <div class="sidebar-actions">
+        <div class="action-row" id="chatActions">
+          <button class="sidebar-btn" onclick="showWelcome()">＋ 新聊天</button>
+          <button class="sidebar-btn" onclick="location.href='files.html'">📂 文件</button>
+        </div>
+        <div class="action-row" id="taskActions" style="display:none">
+          <button class="sidebar-btn" onclick="location.href='task-config.html'">＋ 新任务</button>
+        </div>
+      </div>
+      <div class="sidebar-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="搜索会话...">
+      </div>
+    </div>
+
+    <div class="sidebar-content">
+      <!-- ===== Chats tab ===== -->
+      <div class="sidebar-tab-pane active" id="sidebar-chats">
+        <div class="sidebar-section" id="section-pinned">
+          <div class="sidebar-section-header"><span>📌 置顶</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item active" data-session="project" data-pinned="true" onclick="switchSession('project')">
+              <span class="item-icon">💬</span><span class="item-text">项目方案讨论</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-recent">
+          <div class="sidebar-section-header"><span>💬 最近</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue3" onclick="switchSession('vue3')">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 学习路线</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="debug" onclick="switchSession('debug')">
+              <span class="item-icon">💬</span><span class="item-text">API 调试帮助</span>
+              <span class="item-badge"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="python" onclick="switchSession('python')">
+              <span class="item-icon">💬</span><span class="item-text">Python 数据分析</span>
+              <span class="item-badge"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-work">
+          <div class="sidebar-section-header"><span>📁 工作</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="review" data-folder="work" onclick="switchSession('review')">
+              <span class="item-icon">💬</span><span class="item-text">代码审查</span>
+              <span class="item-badge"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-learn">
+          <div class="sidebar-section-header"><span>📁 学习</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue-note" data-folder="learn" onclick="switchSession('vue-note')">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 笔记</span>
+              <span class="item-badge"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="algo" data-folder="learn" onclick="switchSession('algo')">
+              <span class="item-icon">💬</span><span class="item-text">算法练习</span>
+              <span class="item-badge"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="add-folder-btn" onclick="createSidebarFolder()">＋ 新建文件夹</div>
+        <div class="sidebar-section collapsed" id="section-archive">
+          <div class="sidebar-section-header"><span>🗄️ 归档</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="old" data-archived="true" onclick="switchSession('old')">
+              <span class="item-icon">💬</span><span class="item-text">旧项目讨论</span>
+              <span class="item-badge"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Tasks tab ===== -->
+      <div class="sidebar-tab-pane" id="sidebar-tasks">
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🔔 有更新</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="daily" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">每日新闻摘要</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🟢 运行中</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="weekly" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">周报整理</span>
+              <span class="item-badge indicator-dot indicator-dot-pulse"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>⏸ 已暂停</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="backup" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">数据库备份</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section collapsed">
+          <div class="sidebar-section-header"><span>❌ 已取消</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="report" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">月度报告生成</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User area -->
+    <div class="sidebar-footer">
+      <div class="user-area" id="userArea" onclick="showUserMenu(this)">
+        <div class="user-avatar">张</div>
+        <div class="user-info">
+          <div class="user-name">张三</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="topbar-title">
+        <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+        <span id="chatTitle">项目方案讨论</span>
+      </div>
+    </div>
+
+    <!-- Messages area (normal chat) -->
+    <div class="messages-area" id="messagesArea">
+      <!-- User message 1 -->
+      <div class="message message-user">
+        <div class="avatar avatar-user">张</div>
+        <div class="message-content">帮我搜索一下 Vue3 的最新教程</div>
+      </div>
+
+      <!-- Tool card (completed) -->
+      <div class="tool-card" id="toolCard1" onclick="openToolPanel()">
+        <span class="tool-card-icon">✅</span>
+        <span class="tool-card-text">执行了 3 个工具</span>
+        <span class="tool-card-action">查看 →</span>
+      </div>
+
+      <!-- AI reply 1 -->
+      <div class="message message-ai">
+        <div class="avatar avatar-ai">🐾</div>
+        <div class="message-content md-content">
+          <button class="message-copy-btn" onclick="copyMessage(this)">复制</button>
+          <h3>Vue3 最新教程资源整理</h3>
+          <p>我为你搜索了 Vue3 的最新学习资源，以下是推荐的教程：</p>
+          <ul>
+            <li><strong>Vue3 官方文档</strong> — 最权威的学习资源，包含完整的 API 参考和教程</li>
+            <li><strong>Vue School</strong> — 提供高质量的 Vue3 视频课程，从入门到进阶</li>
+            <li><strong>Vue Mastery</strong> — 由 Vue 核心团队推荐的学习平台</li>
+          </ul>
+          <p>关键学习内容包括：</p>
+          <ol>
+            <li>Composition API（组合式 API）</li>
+            <li>响应式系统（ref、reactive、computed）</li>
+            <li>Script Setup 语法糖</li>
+            <li>Pinia 状态管理</li>
+          </ol>
+          <div class="code-block-header">
+            <span class="code-lang">javascript</span>
+            <button class="code-copy-btn" onclick="copyCode(this)">复制代码</button>
+          </div>
+          <pre><code>// Vue3 Composition API 示例
+import { ref, computed, onMounted } from 'vue'
+
+export default {
+  setup() {
+    const count = ref(0)
+    const doubled = computed(() => count.value * 2)
+
+    function increment() {
+      count.value++
+    }
+
+    onMounted(() => {
+      console.log('组件已挂载')
+    })
+
+    return { count, doubled, increment }
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- User message 2 -->
+      <div class="message message-user">
+        <div class="avatar avatar-user">张</div>
+        <div class="message-content">把这些整理成一份学习路线图</div>
+      </div>
+
+      <!-- Tool card (executing -> will complete) -->
+      <div class="tool-card" id="toolCard2" onclick="openToolPanel()">
+        <span class="tool-card-icon" id="toolCard2Icon">⚙️</span>
+        <span class="tool-card-text" id="toolCard2Text">正在执行工具...</span>
+        <span class="tool-card-action">查看 →</span>
+        <div class="thinking-indicator" id="toolCard2Loading" style="padding:0;margin-left:4px;">
+          <div class="thinking-dot"></div>
+          <div class="thinking-dot"></div>
+          <div class="thinking-dot"></div>
+        </div>
+      </div>
+
+      <!-- AI reply 2 (typewriter effect) -->
+      <div class="message message-ai" id="aiReply2">
+        <div class="avatar avatar-ai">🐾</div>
+        <div class="message-content md-content" id="aiReply2Content">
+          <button class="message-copy-btn" onclick="copyMessage(this)">复制</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Welcome state (hidden by default) -->
+    <div class="welcome-state hidden" id="welcomeState">
+      <div class="welcome-icon">🐾</div>
+      <div>
+        <h2>你好，欢迎使用 OpenClaw</h2>
+        <p>你可以在下方输入任何问题开始对话</p>
+      </div>
+      <div class="quick-actions">
+        <div class="quick-action-card hover-lift" onclick="quickAction('帮我写一个 Vue3 组件，实现用户注册表单')">
+          <div class="qa-icon">💡</div>
+          <div class="qa-text">帮我写代码</div>
+        </div>
+        <div class="quick-action-card hover-lift" onclick="quickAction('帮我写一份产品需求文档的大纲')">
+          <div class="qa-icon">📝</div>
+          <div class="qa-text">帮我写文案</div>
+        </div>
+        <div class="quick-action-card hover-lift" onclick="quickAction('搜索 2025 年最新的 AI 发展趋势')">
+          <div class="qa-icon">🔍</div>
+          <div class="qa-text">帮我搜索</div>
+        </div>
+        <div class="quick-action-card hover-lift" onclick="quickAction('分析这份销售数据，找出增长最快的产品类目')">
+          <div class="qa-icon">📊</div>
+          <div class="qa-text">分析数据</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stop button -->
+    <button class="stop-btn" id="stopBtn" onclick="stopGeneration()">⏹ 停止生成</button>
+
+    <!-- Image preview strip -->
+    <div class="image-preview-strip" id="imagePreview">
+      <!-- Dynamically added -->
+    </div>
+
+    <!-- Input area -->
+    <div class="input-area">
+      <div class="input-wrapper">
+        <button class="icon-btn" title="添加附件" onclick="document.getElementById('fileInput').click()">📎</button>
+        <input type="file" id="fileInput" style="display:none" multiple accept="image/*" onchange="handleFileSelect(this)">
+        <textarea class="chat-textarea" id="chatInput" placeholder="输入消息... (Enter 发送, Shift+Enter 换行)" rows="1"></textarea>
+        <div class="input-actions">
+          <button class="send-btn" id="sendBtn" disabled onclick="sendMessage()">▶</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Right panel (tool execution details) -->
+  <div class="right-panel" id="rightPanel">
+    <div class="panel-resize-handle"></div>
+    <div class="right-panel-header">
+      <h3>🔧 工具执行详情</h3>
+      <button class="right-panel-close" onclick="closeToolPanel()">✕</button>
+    </div>
+    <div class="right-panel-content">
+      <div class="hybrid-timeline">
+        <div class="hybrid-timeline-progress" id="hybridProgress" style="height:68%"></div>
+        <div class="hybrid-step complete">
+          <div class="hybrid-marker">✓</div>
+          <div class="hybrid-card">
+            <div class="hybrid-card-title"><span>web_search</span><span class="tool-time">0.8s</span></div>
+            <div class="hybrid-card-detail">搜索 "Vue3 最新教程 2025"</div>
+            <div class="hybrid-card-status s-complete">✓ 返回 5 条结果</div>
+          </div>
+        </div>
+        <div class="hybrid-step complete">
+          <div class="hybrid-marker">✓</div>
+          <div class="hybrid-card">
+            <div class="hybrid-card-title"><span>read_page</span><span class="tool-time">1.2s</span></div>
+            <div class="hybrid-card-detail">读取 vuejs.org/guide/introduction</div>
+            <div class="hybrid-card-status s-complete">✓ 获取 2,340 字</div>
+          </div>
+        </div>
+        <div class="hybrid-step running">
+          <div class="hybrid-marker"><span class="mini-spinner"></span></div>
+          <div class="hybrid-card">
+            <div class="hybrid-card-title"><span>organize</span><span class="tool-time">...</span></div>
+            <div class="hybrid-card-detail">正在生成学习路线图</div>
+            <div class="hybrid-card-status s-running"><span class="mini-spinner"></span> 执行中</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/interactions.js"></script>
+<script>
+  /* ========== Chat Page Logic ========== */
+
+  var chatInput = document.getElementById('chatInput');
+  var sendBtn = document.getElementById('sendBtn');
+  var messagesArea = document.getElementById('messagesArea');
+  var welcomeState = document.getElementById('welcomeState');
+  var stopBtn = document.getElementById('stopBtn');
+  var rightPanel = document.getElementById('rightPanel');
+  var currentTypewriter = null;
+  var isGenerating = false;
+
+  // Auto-resize textarea
+  autoResize(chatInput);
+
+  // Enable/disable send button based on input
+  chatInput.addEventListener('input', function() {
+    sendBtn.disabled = chatInput.value.trim() === '';
+  });
+
+  // Enter to send, Shift+Enter for newline
+  chatInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (chatInput.value.trim()) sendMessage();
+    }
+  });
+
+  // Paste image support
+  chatInput.addEventListener('paste', function(e) {
+    var items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        var file = items[i].getAsFile();
+        addImagePreview(file);
+      }
+    }
+  });
+
+  function handleFileSelect(input) {
+    var files = input.files;
+    for (var i = 0; i < files.length; i++) {
+      if (files[i].type.indexOf('image') !== -1) {
+        addImagePreview(files[i]);
+      }
+    }
+    input.value = '';
+  }
+
+  function addImagePreview(file) {
+    var strip = document.getElementById('imagePreview');
+    strip.classList.add('visible');
+
+    var item = document.createElement('div');
+    item.className = 'image-preview-item';
+
+    var img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+
+    var removeBtn = document.createElement('button');
+    removeBtn.className = 'image-preview-remove';
+    removeBtn.textContent = '✕';
+    removeBtn.onclick = function() {
+      item.remove();
+      if (strip.children.length === 0) strip.classList.remove('visible');
+    };
+
+    item.appendChild(img);
+    item.appendChild(removeBtn);
+    strip.appendChild(item);
+  }
+
+  // Send message
+  function sendMessage() {
+    var text = chatInput.value.trim();
+    if (!text || isGenerating) return;
+
+    // Hide welcome, show messages
+    welcomeState.classList.add('hidden');
+    messagesArea.classList.remove('hidden');
+
+    // Add user message
+    var userMsg = document.createElement('div');
+    userMsg.className = 'message message-user slide-up';
+    userMsg.innerHTML = '<div class="avatar avatar-user">张</div><div class="message-content">' + escapeHtml(text) + '</div>';
+    messagesArea.appendChild(userMsg);
+
+    // Clear input
+    chatInput.value = '';
+    chatInput.style.height = 'auto';
+    sendBtn.disabled = true;
+
+    // Clear image preview
+    var strip = document.getElementById('imagePreview');
+    strip.innerHTML = '';
+    strip.classList.remove('visible');
+
+    // Scroll to bottom
+    scrollToBottom();
+
+    // Show thinking indicator
+    var thinkingMsg = document.createElement('div');
+    thinkingMsg.className = 'message message-ai';
+    thinkingMsg.id = 'thinkingMsg';
+    thinkingMsg.innerHTML = '<div class="avatar avatar-ai">🐾</div><div class="thinking-indicator"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>';
+    messagesArea.appendChild(thinkingMsg);
+    scrollToBottom();
+
+    isGenerating = true;
+    stopBtn.classList.add('visible');
+
+    // Simulate AI reply after delay
+    setTimeout(function() {
+      // Remove thinking
+      var thinking = document.getElementById('thinkingMsg');
+      if (thinking) thinking.remove();
+
+      // Create AI reply with typewriter
+      var aiMsg = document.createElement('div');
+      aiMsg.className = 'message message-ai slide-up';
+      var contentDiv = document.createElement('div');
+      contentDiv.className = 'message-content md-content';
+
+      var copyBtn = document.createElement('button');
+      copyBtn.className = 'message-copy-btn';
+      copyBtn.textContent = '复制';
+      copyBtn.onclick = function() { copyMessage(copyBtn); };
+      contentDiv.appendChild(copyBtn);
+
+      var textSpan = document.createElement('span');
+      contentDiv.appendChild(textSpan);
+
+      aiMsg.innerHTML = '<div class="avatar avatar-ai">🐾</div>';
+      aiMsg.appendChild(contentDiv);
+      messagesArea.appendChild(aiMsg);
+
+      var replyText = generateReply(text);
+      var cursor = document.createElement('span');
+      cursor.className = 'typing-cursor';
+      contentDiv.appendChild(cursor);
+
+      currentTypewriter = typeWriter(textSpan, replyText, 20, function() {
+        if (cursor.parentNode) cursor.remove();
+        isGenerating = false;
+        stopBtn.classList.remove('visible');
+      });
+
+      scrollToBottom();
+    }, 1000);
+  }
+
+  function generateReply(userText) {
+    // Simple mock replies
+    if (userText.includes('代码') || userText.includes('code')) {
+      return '<p>好的，这是一个示例代码：</p><pre><code>function hello() {\n  console.log("Hello, World!");\n}</code></pre><p>你可以根据需求修改这段代码。</p>';
+    }
+    if (userText.includes('搜索') || userText.includes('search')) {
+      return '<p>我已经为你搜索了相关信息。以下是主要发现：</p><ul><li>结果 1：相关文档和教程</li><li>结果 2：社区讨论和最佳实践</li><li>结果 3：最新版本更新说明</li></ul>';
+    }
+    return '<p>收到你的消息！我来帮你分析一下。</p><p>根据你的描述，我有以下建议：</p><ol><li>首先确认具体需求和目标</li><li>然后制定实施方案</li><li>最后逐步执行并验证结果</li></ol><p>需要我进一步展开哪个部分吗？</p>';
+  }
+
+  function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function stopGeneration() {
+    if (currentTypewriter) {
+      currentTypewriter();
+      currentTypewriter = null;
+    }
+    isGenerating = false;
+    stopBtn.classList.remove('visible');
+    var thinking = document.getElementById('thinkingMsg');
+    if (thinking) thinking.remove();
+  }
+
+  function scrollToBottom() {
+    setTimeout(function() {
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+    }, 50);
+  }
+
+  function copyMessage(btn) {
+    var content = btn.parentElement.textContent.replace('复制', '').trim();
+    navigator.clipboard.writeText(content).then(function() {
+      btn.textContent = '已复制';
+      setTimeout(function() { btn.textContent = '复制'; }, 1500);
+    });
+  }
+
+  function copyCode(btn) {
+    var pre = btn.closest('.code-block-header').nextElementSibling;
+    if (pre) {
+      navigator.clipboard.writeText(pre.textContent).then(function() {
+        btn.textContent = '已复制';
+        setTimeout(function() { btn.textContent = '复制代码'; }, 1500);
+      });
+    }
+  }
+
+  // Welcome state
+  function showWelcome() {
+    messagesArea.classList.add('hidden');
+    welcomeState.classList.remove('hidden');
+    document.getElementById('chatTitle').textContent = '新聊天';
+    // Deselect sidebar items
+    document.querySelectorAll('.sidebar-item').forEach(function(el) { el.classList.remove('active'); });
+    closeToolPanel();
+  }
+
+  function quickAction(text) {
+    chatInput.value = text;
+    sendBtn.disabled = false;
+    welcomeState.classList.add('hidden');
+    messagesArea.classList.remove('hidden');
+    messagesArea.innerHTML = '';
+    sendMessage();
+  }
+
+  // Session switching
+  function switchSession(id) {
+    document.querySelectorAll('.sidebar-item').forEach(function(el) { el.classList.remove('active'); });
+    var item = document.querySelector('[data-session="' + id + '"]');
+    if (item) {
+      item.classList.add('active');
+      document.getElementById('chatTitle').textContent = item.querySelector('.item-text').textContent;
+    }
+    closeToolPanel();
+    // For prototype, just show the messages area
+    welcomeState.classList.add('hidden');
+    messagesArea.classList.remove('hidden');
+  }
+
+  // Tool panel
+  function openToolPanel() {
+    rightPanel.classList.add('open');
+    // Simulate tool 3 completing after 2s
+    setTimeout(function() {
+      var steps = document.querySelectorAll('.hybrid-step');
+      if (steps[2]) {
+        steps[2].className = 'hybrid-step complete';
+        steps[2].querySelector('.hybrid-marker').innerHTML = '✓';
+        var time = steps[2].querySelector('.hybrid-card-title .tool-time');
+        if (time) time.textContent = '1.5s';
+        var status = steps[2].querySelector('.hybrid-card-status');
+        if (status) { status.className = 'hybrid-card-status s-complete'; status.textContent = '✓ 生成完毕'; }
+        var prog = document.getElementById('hybridProgress');
+        if (prog) prog.style.height = '100%';
+      }
+    }, 2000);
+  }
+
+  function closeToolPanel() {
+    rightPanel.classList.remove('open');
+    rightPanel.style.width = '';
+    rightPanel.style.minWidth = '';
+  }
+
+  // Esc to close panel
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeToolPanel();
+  });
+
+  // User menu
+  function showUserMenu(el) {
+    showDropdown(el, [
+      { icon: '⚙️', label: '设置', action: function() { location.href = 'settings.html'; } },
+      { divider: true },
+      { icon: '🚪', label: '退出登录', danger: true, action: function() { location.href = 'login.html'; } }
+    ]);
+  }
+
+  // Tool card 2: switch from executing to complete after 3s
+  setTimeout(function() {
+    var icon = document.getElementById('toolCard2Icon');
+    var text = document.getElementById('toolCard2Text');
+    var loading = document.getElementById('toolCard2Loading');
+    if (icon) icon.textContent = '✅';
+    if (text) text.textContent = '执行了 3 个工具';
+    if (loading) loading.style.display = 'none';
+  }, 3000);
+
+  // AI Reply 2: typewriter effect
+  setTimeout(function() {
+    var el = document.getElementById('aiReply2Content');
+    if (!el) return;
+    var replyHtml = '<h3>Vue3 学习路线图</h3>' +
+      '<p>根据搜索结果和最佳实践，我为你整理了以下学习路线：</p>' +
+      '<h4>🟢 第一阶段：基础入门（1-2 周）</h4>' +
+      '<ul><li>HTML/CSS/JS 基础回顾</li><li>Vue3 核心概念：模板语法、指令、组件</li><li>使用 Vite 创建项目</li></ul>' +
+      '<h4>🟡 第二阶段：核心进阶（2-3 周）</h4>' +
+      '<ul><li>Composition API 深入</li><li>响应式原理（ref / reactive / watch）</li><li>组件通信（props / emits / provide-inject）</li></ul>' +
+      '<h4>🔴 第三阶段：生态工具（2-3 周）</h4>' +
+      '<ul><li>Vue Router 路由管理</li><li>Pinia 状态管理</li><li>Axios 网络请求</li></ul>' +
+      '<blockquote>建议每个阶段都结合实际项目练习，效果最佳。</blockquote>';
+
+    var textSpan = document.createElement('span');
+    el.appendChild(textSpan);
+    var cursor = document.createElement('span');
+    cursor.className = 'typing-cursor';
+    el.appendChild(cursor);
+
+    currentTypewriter = typeWriter(textSpan, replyHtml, 15, function() {
+      if (cursor.parentNode) cursor.remove();
+      scrollToBottom();
+    });
+  }, 3500);
+
+  // Initial scroll
+  scrollToBottom();
+</script>
+
+</body>
+</html>

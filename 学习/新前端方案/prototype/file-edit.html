@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw - 文件编辑</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle" onclick="toggleSidebar()" title="折叠侧边栏">◀</div>
+    <div class="sidebar-header">
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab active" data-tab="chats" onclick="switchSidebarTab('chats')">会话</button>
+        <button class="sidebar-tab" data-tab="tasks" onclick="switchSidebarTab('tasks')">任务</button>
+      </div>
+      <div class="sidebar-actions">
+        <div class="action-row" id="chatActions">
+          <button class="sidebar-btn" onclick="location.href='chat.html'">＋ 新聊天</button>
+          <button class="sidebar-btn active" onclick="location.href='files.html'">📂 文件</button>
+        </div>
+        <div class="action-row" id="taskActions" style="display:none">
+          <button class="sidebar-btn" onclick="location.href='task-config.html'">＋ 新任务</button>
+        </div>
+      </div>
+      <div class="sidebar-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="搜索会话...">
+      </div>
+    </div>
+    <div class="sidebar-content">
+      <div class="sidebar-tab-pane active" id="sidebar-chats">
+        <div class="sidebar-section" id="section-pinned">
+          <div class="sidebar-section-header"><span>📌 置顶</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="project" data-pinned="true" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">项目方案讨论</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-recent">
+          <div class="sidebar-section-header"><span>💬 最近</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue3" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 学习路线</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="debug" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">API 调试帮助</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="python" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Python 数据分析</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-work">
+          <div class="sidebar-section-header"><span>📁 工作</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="review" data-folder="work" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">代码审查</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-learn">
+          <div class="sidebar-section-header"><span>📁 学习</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue-note" data-folder="learn" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 笔记</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="algo" data-folder="learn" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">算法练习</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="add-folder-btn" onclick="createSidebarFolder()">＋ 新建文件夹</div>
+        <div class="sidebar-section collapsed" id="section-archive">
+          <div class="sidebar-section-header"><span>🗄️ 归档</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="old" data-archived="true" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">旧项目讨论</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-tab-pane" id="sidebar-tasks">
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🔔 有更新</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="daily" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">每日新闻摘要</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🟢 运行中</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="weekly" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">周报整理</span>
+              <span class="item-badge indicator-dot indicator-dot-pulse"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>⏸ 已暂停</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="backup" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">数据库备份</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section collapsed">
+          <div class="sidebar-section-header"><span>❌ 已取消</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="report" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">月度报告生成</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-area" onclick="showDropdown(this, [{icon:'⚙️',label:'设置',action:function(){location.href='settings.html'}},{divider:true},{icon:'🚪',label:'退出登录',danger:true,action:function(){location.href='login.html'}}])">
+        <div class="user-avatar">张</div>
+        <div class="user-info"><div class="user-name">张三</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <div class="file-editor-topbar">
+      <button class="btn btn-ghost btn-sm" onclick="location.href='files.html'">← 返回</button>
+      <span class="file-name-display" id="fileName">README.md</span>
+      <button class="btn btn-secondary btn-sm" onclick="downloadFile()">⬇️ 下载</button>
+      <button class="btn btn-primary btn-sm" id="saveBtn" onclick="saveFile()">💾 保存</button>
+    </div>
+
+    <div class="file-editor-area">
+      <textarea class="file-editor-textarea" id="editorTextarea" spellcheck="false">
+# OpenClaw 项目说明
+
+## 简介
+
+OpenClaw 是一个 AI Agent 管理平台，让用户可以轻松配置和使用 AI 助手。
+
+## 功能特点
+
+- **智能对话** — 基于大语言模型的自然语言交互
+- **定期任务** — 支持配置定时执行的自动化任务
+- **文件管理** — 集成的文件系统，AI 可直接读写
+- **技能扩展** — 可插拔的技能系统，按需启用
+
+## 技术栈
+
+| 层级 | 技术 |
+|------|------|
+| 前端 | Vue3 + TypeScript |
+| 后端 | Python FastAPI |
+| 数据库 | PostgreSQL |
+| AI | Claude API |
+
+## 快速开始
+
+```bash
+# 克隆项目
+git clone https://github.com/example/openclaw.git
+
+# 安装依赖
+cd openclaw && npm install
+
+# 启动开发服务器
+npm run dev
+```
+
+## 贡献指南
+
+1. Fork 本仓库
+2. 创建功能分支 (`git checkout -b feature/amazing`)
+3. 提交代码 (`git commit -m 'Add amazing feature'`)
+4. 推送分支 (`git push origin feature/amazing`)
+5. 创建 Pull Request
+
+## 许可证
+
+MIT License
+</textarea>
+    </div>
+  </main>
+</div>
+
+<script src="js/interactions.js"></script>
+<script>
+  var textarea = document.getElementById('editorTextarea');
+  var originalContent = textarea.value;
+
+  // Get file name from URL params
+  var params = new URLSearchParams(window.location.search);
+  var fileName = params.get('file') || 'README.md';
+  document.getElementById('fileName').textContent = fileName;
+  document.title = 'OpenClaw - ' + fileName;
+
+  function saveFile() {
+    var btn = document.getElementById('saveBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    setTimeout(function() {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      originalContent = textarea.value;
+      showToast('已保存 ' + fileName, 'success');
+    }, 500);
+  }
+
+  function downloadFile() {
+    var content = textarea.value;
+    var blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('下载已开始', 'info');
+  }
+
+  // Ctrl+S to save
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      saveFile();
+    }
+  });
+</script>
+
+</body>
+</html>

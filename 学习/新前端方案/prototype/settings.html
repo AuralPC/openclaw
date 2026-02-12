@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw - 设置</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle" onclick="toggleSidebar()" title="折叠侧边栏">◀</div>
+    <div class="sidebar-header">
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab active" data-tab="chats" onclick="switchSidebarTab('chats')">会话</button>
+        <button class="sidebar-tab" data-tab="tasks" onclick="switchSidebarTab('tasks')">任务</button>
+      </div>
+      <div class="sidebar-actions">
+        <div class="action-row" id="chatActions">
+          <button class="sidebar-btn" onclick="location.href='chat.html'">＋ 新聊天</button>
+          <button class="sidebar-btn" onclick="location.href='files.html'">📂 文件</button>
+        </div>
+        <div class="action-row" id="taskActions" style="display:none">
+          <button class="sidebar-btn" onclick="location.href='task-config.html'">＋ 新任务</button>
+        </div>
+      </div>
+      <div class="sidebar-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="搜索会话...">
+      </div>
+    </div>
+    <div class="sidebar-content">
+      <div class="sidebar-tab-pane active" id="sidebar-chats">
+        <div class="sidebar-section" id="section-pinned">
+          <div class="sidebar-section-header"><span>📌 置顶</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="project" data-pinned="true" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">项目方案讨论</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-recent">
+          <div class="sidebar-section-header"><span>💬 最近</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue3" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 学习路线</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="debug" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">API 调试帮助</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="python" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Python 数据分析</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-work">
+          <div class="sidebar-section-header"><span>📁 工作</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="review" data-folder="work" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">代码审查</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-learn">
+          <div class="sidebar-section-header"><span>📁 学习</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue-note" data-folder="learn" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 笔记</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="algo" data-folder="learn" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">算法练习</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="add-folder-btn" onclick="createSidebarFolder()">＋ 新建文件夹</div>
+        <div class="sidebar-section collapsed" id="section-archive">
+          <div class="sidebar-section-header"><span>🗄️ 归档</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="old" data-archived="true" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">旧项目讨论</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-tab-pane" id="sidebar-tasks">
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🔔 有更新</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="daily" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">每日新闻摘要</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🟢 运行中</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="weekly" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">周报整理</span>
+              <span class="item-badge indicator-dot indicator-dot-pulse"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>⏸ 已暂停</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="backup" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">数据库备份</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section collapsed">
+          <div class="sidebar-section-header"><span>❌ 已取消</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="report" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">月度报告生成</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-area" onclick="showDropdown(this, [{icon:'⚙️',label:'设置',action:function(){location.href='settings.html'}},{divider:true},{icon:'🚪',label:'退出登录',danger:true,action:function(){location.href='login.html'}}])">
+        <div class="user-avatar">张</div>
+        <div class="user-info"><div class="user-name">张三</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-title">
+        <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+        <span>设置</span>
+      </div>
+    </div>
+
+    <div class="tab-container" style="flex:1;overflow-y:auto;">
+      <!-- Tab bar -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="tab-personal" onclick="window.location.href='settings.html'">个人设置</button>
+        <button class="tab-btn" data-tab="tab-files" onclick="window.location.href='settings-files.html'">Agent 文件</button>
+        <button class="tab-btn" data-tab="tab-skills" onclick="window.location.href='settings-skills.html'">Agent 技能</button>
+        <div class="tab-indicator" id="tabIndicator"></div>
+      </div>
+
+      <!-- Tab 1: Personal Settings -->
+      <div class="settings-container">
+        <!-- Profile section -->
+        <div class="card settings-section">
+          <div class="card-header"><span class="card-title">个人信息</span></div>
+          <div class="setting-row">
+            <span class="setting-label">头像</span>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="avatar avatar-user avatar-lg">张</div>
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('avatarInput').click()">更换头像</button>
+              <input type="file" id="avatarInput" style="display:none" accept="image/*" onchange="changeAvatar(this)">
+            </div>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">昵称</span>
+            <div style="flex:1;text-align:right;">
+              <input type="text" class="form-input" value="张三" id="nicknameInput" style="max-width:200px;display:inline-block;text-align:right;">
+            </div>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">邮箱</span>
+            <span class="setting-value" style="color:var(--text-muted);">zhangsan@example.com</span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">密码</span>
+            <button class="btn btn-secondary btn-sm" onclick="showPasswordModal()">修改密码</button>
+          </div>
+        </div>
+
+        <!-- Preferences -->
+        <div class="card settings-section">
+          <div class="card-header"><span class="card-title">偏好设置</span></div>
+          <div class="setting-row">
+            <span class="setting-label">主题</span>
+            <div class="theme-options" id="themeOptions">
+              <div class="theme-option active" data-theme="dark" onclick="selectTheme('dark')">🌙 深色</div>
+              <div class="theme-option" data-theme="light" onclick="selectTheme('light')">☀️ 浅色</div>
+              <div class="theme-option" data-theme="system" onclick="selectTheme('system')">💻 跟随系统</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Usage stats -->
+        <div class="card settings-section">
+          <div class="card-header"><span class="card-title">使用统计</span></div>
+          <div class="setting-row">
+            <span class="setting-label">本月用量</span>
+            <span class="setting-value">12,345 tokens</span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">本月费用</span>
+            <span class="setting-value">¥3.21</span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">总会话数</span>
+            <span class="setting-value">42 个</span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">注册时间</span>
+            <span class="setting-value" style="color:var(--text-muted);">2025-01-15</span>
+          </div>
+        </div>
+
+        <!-- Logout -->
+        <div style="padding:0 0 32px;">
+          <button class="btn btn-danger btn-block" onclick="showModal('退出登录','确定退出登录吗？',function(){location.href='login.html'})">退出登录</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/interactions.js"></script>
+<script>
+  // Init tab indicator position
+  setTimeout(function() {
+    var activeTab = document.querySelector('.tab-btn.active');
+    var indicator = document.getElementById('tabIndicator');
+    if (activeTab && indicator) {
+      indicator.style.left = activeTab.offsetLeft + 'px';
+      indicator.style.width = activeTab.offsetWidth + 'px';
+    }
+  }, 50);
+
+  // Theme selection
+  function selectTheme(theme) {
+    document.querySelectorAll('.theme-option').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    document.querySelector('[data-theme="' + theme + '"]').classList.add('active');
+    applyTheme(theme);
+    showToast('主题已切换', 'success');
+  }
+
+  // Init current theme state
+  (function() {
+    var current = localStorage.getItem('theme') || 'dark';
+    document.querySelectorAll('.theme-option').forEach(function(el) {
+      el.classList.toggle('active', el.dataset.theme === current);
+    });
+  })();
+
+  // Password modal
+  function showPasswordModal() {
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML =
+      '<div class="modal-card" style="min-width:400px;">' +
+        '<h3 class="modal-title">修改密码</h3>' +
+        '<div class="form-group"><label class="form-label">当前密码</label><input type="password" class="form-input" placeholder="输入当前密码"></div>' +
+        '<div class="form-group"><label class="form-label">新密码</label><input type="password" class="form-input" placeholder="输入新密码"></div>' +
+        '<div class="form-group"><label class="form-label">确认新密码</label><input type="password" class="form-input" placeholder="再次输入新密码"></div>' +
+        '<div class="modal-actions">' +
+          '<button class="btn btn-secondary" onclick="this.closest(\'.modal-overlay\').remove()">取消</button>' +
+          '<button class="btn btn-primary" onclick="this.closest(\'.modal-overlay\').remove();showToast(\'密码已修改\',\'success\')">确认修改</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.remove();
+    });
+  }
+
+  // Avatar change
+  function changeAvatar(input) {
+    if (input.files && input.files[0]) {
+      showToast('头像已更新', 'success');
+    }
+  }
+</script>
+
+</body>
+</html>

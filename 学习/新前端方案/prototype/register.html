@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw - 注册</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">🐾</div>
+      <h1>OpenClaw</h1>
+      <p>创建新账号</p>
+    </div>
+
+    <form class="auth-form" id="registerForm" onsubmit="return false;">
+      <div class="form-group">
+        <label class="form-label">用户名</label>
+        <input type="text" class="form-input" id="regUsername" placeholder="至少 3 个字符">
+        <div class="form-error" id="errUsername">用户名至少需要 3 个字符</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">邮箱</label>
+        <input type="email" class="form-input" id="regEmail" placeholder="your@email.com">
+        <div class="form-error" id="errEmail">请输入有效的邮箱地址</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">密码</label>
+        <input type="password" class="form-input" id="regPassword" placeholder="至少 6 个字符">
+        <div class="form-error" id="errPassword">密码至少需要 6 个字符</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">确认密码</label>
+        <input type="password" class="form-input" id="regConfirm" placeholder="再次输入密码">
+        <div class="form-error" id="errConfirm">两次输入的密码不一致</div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg disabled" id="registerBtn" disabled>注 册</button>
+    </form>
+
+    <div class="auth-footer">
+      已有账号？<a href="login.html">去登录</a>
+    </div>
+  </div>
+
+  <script src="js/interactions.js"></script>
+  <script>
+    var form = document.getElementById('registerForm');
+    var btn = document.getElementById('registerBtn');
+    var fields = {
+      username: document.getElementById('regUsername'),
+      email: document.getElementById('regEmail'),
+      password: document.getElementById('regPassword'),
+      confirm: document.getElementById('regConfirm')
+    };
+    var errors = {
+      username: document.getElementById('errUsername'),
+      email: document.getElementById('errEmail'),
+      password: document.getElementById('errPassword'),
+      confirm: document.getElementById('errConfirm')
+    };
+
+    var validity = { username: false, email: false, password: false, confirm: false };
+
+    function validateField(name) {
+      var val = fields[name].value;
+      var valid = false;
+
+      if (name === 'username') {
+        valid = val.length >= 3;
+      } else if (name === 'email') {
+        valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+      } else if (name === 'password') {
+        valid = val.length >= 6;
+        // Re-validate confirm if password changes
+        if (fields.confirm.value) validateField('confirm');
+      } else if (name === 'confirm') {
+        valid = val.length > 0 && val === fields.password.value;
+      }
+
+      validity[name] = valid;
+
+      if (val.length > 0 && !valid) {
+        fields[name].classList.add('error');
+        errors[name].classList.add('visible');
+      } else {
+        fields[name].classList.remove('error');
+        errors[name].classList.remove('visible');
+      }
+
+      updateButton();
+    }
+
+    function updateButton() {
+      var allValid = validity.username && validity.email && validity.password && validity.confirm;
+      btn.disabled = !allValid;
+      if (allValid) {
+        btn.classList.remove('disabled');
+      } else {
+        btn.classList.add('disabled');
+      }
+    }
+
+    // Bind events
+    Object.keys(fields).forEach(function(name) {
+      fields[name].addEventListener('input', function() { validateField(name); });
+      fields[name].addEventListener('blur', function() { validateField(name); });
+    });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (btn.disabled) return;
+
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      setTimeout(function() {
+        window.location.href = 'chat.html';
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

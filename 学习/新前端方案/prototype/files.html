@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw - 文件管理</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle" onclick="toggleSidebar()" title="折叠侧边栏">◀</div>
+    <div class="sidebar-header">
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab active" data-tab="chats" onclick="switchSidebarTab('chats')">会话</button>
+        <button class="sidebar-tab" data-tab="tasks" onclick="switchSidebarTab('tasks')">任务</button>
+      </div>
+      <div class="sidebar-actions">
+        <div class="action-row" id="chatActions">
+          <button class="sidebar-btn" onclick="location.href='chat.html'">＋ 新聊天</button>
+          <button class="sidebar-btn active" onclick="location.href='files.html'">📂 文件</button>
+        </div>
+        <div class="action-row" id="taskActions" style="display:none">
+          <button class="sidebar-btn" onclick="location.href='task-config.html'">＋ 新任务</button>
+        </div>
+      </div>
+      <div class="sidebar-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="搜索会话...">
+      </div>
+    </div>
+    <div class="sidebar-content">
+      <div class="sidebar-tab-pane active" id="sidebar-chats">
+        <div class="sidebar-section" id="section-pinned">
+          <div class="sidebar-section-header"><span>📌 置顶</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="project" data-pinned="true" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">项目方案讨论</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-recent">
+          <div class="sidebar-section-header"><span>💬 最近</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue3" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 学习路线</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="debug" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">API 调试帮助</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="python" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Python 数据分析</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-work">
+          <div class="sidebar-section-header"><span>📁 工作</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="review" data-folder="work" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">代码审查</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section" id="section-learn">
+          <div class="sidebar-section-header"><span>📁 学习</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="vue-note" data-folder="learn" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">Vue3 笔记</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+            <div class="sidebar-item" data-session="algo" data-folder="learn" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">算法练习</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="add-folder-btn" onclick="createSidebarFolder()">＋ 新建文件夹</div>
+        <div class="sidebar-section collapsed" id="section-archive">
+          <div class="sidebar-section-header"><span>🗄️ 归档</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="old" data-archived="true" onclick="location.href='chat.html'">
+              <span class="item-icon">💬</span><span class="item-text">旧项目讨论</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-tab-pane" id="sidebar-tasks">
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🔔 有更新</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="daily" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">每日新闻摘要</span>
+              <span class="item-badge indicator-dot indicator-dot-accent"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>🟢 运行中</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="weekly" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">周报整理</span>
+              <span class="item-badge indicator-dot indicator-dot-pulse"></span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-header"><span>⏸ 已暂停</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="backup" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">数据库备份</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section collapsed">
+          <div class="sidebar-section-header"><span>❌ 已取消</span><span class="chevron">▼</span></div>
+          <div class="sidebar-section-items">
+            <div class="sidebar-item" data-session="report" onclick="location.href='task-history.html'">
+              <span class="item-icon">⏰</span><span class="item-text">月度报告生成</span>
+              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-area" onclick="showDropdown(this, [{icon:'⚙️',label:'设置',action:function(){location.href='settings.html'}},{divider:true},{icon:'🚪',label:'退出登录',danger:true,action:function(){location.href='login.html'}}])">
+        <div class="user-avatar">张</div>
+        <div class="user-info"><div class="user-name">张三</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+  <!-- Main content -->
+  <main class="main-content" style="position:relative;">
+    <!-- Drag overlay -->
+    <div class="drag-overlay" id="dragOverlay">
+      <span class="drag-overlay-text">📁 释放以上传文件</span>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="files-toolbar">
+      <div class="breadcrumb" id="breadcrumb">
+        <span class="breadcrumb-item" onclick="navigateTo('root')">📂 workspace</span>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-item current" id="currentDir">根目录</span>
+      </div>
+      <div class="files-actions">
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('uploadInput').click()">📤 上传</button>
+        <input type="file" id="uploadInput" style="display:none" multiple onchange="handleUpload(this)">
+        <button class="btn btn-secondary btn-sm" onclick="createFolder()">📁 新建文件夹</button>
+        <button class="btn btn-secondary btn-sm" onclick="createFile()">📄 新建文件</button>
+        <div class="sidebar-search" style="margin:0;">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="搜索文件..." id="fileSearch" oninput="filterFiles()">
+        </div>
+      </div>
+    </div>
+
+    <!-- File table -->
+    <div style="flex:1;overflow:auto;" id="fileListContainer">
+      <table class="file-table">
+        <thead>
+          <tr>
+            <th onclick="sortFiles('name')">名称 <span class="sort-icon">↕</span></th>
+            <th onclick="sortFiles('size')" style="width:100px;">大小 <span class="sort-icon">↕</span></th>
+            <th onclick="sortFiles('date')" style="width:140px;">修改时间 <span class="sort-icon">↕</span></th>
+            <th style="width:80px;"></th>
+          </tr>
+        </thead>
+        <tbody id="fileTableBody">
+          <!-- Rendered by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Storage bar -->
+    <div class="storage-bar">
+      <div class="storage-info">
+        <span>已用 23.4 MB / 1 GB</span>
+        <span>2.3%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 2.3%"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox hidden" id="lightbox" onclick="closeLightbox()">
+  <div style="text-align:center;color:white;">
+    <div style="font-size:120px;margin-bottom:16px;">🖼️</div>
+    <p style="font-size:18px;">diagram.png</p>
+    <p style="color:var(--text-muted);">124 KB &middot; 1920 x 1080 &middot; PNG</p>
+  </div>
+</div>
+
+<script src="js/interactions.js"></script>
+<script>
+  /* File system data */
+  var fileTree = {
+    root: [
+      { name: 'projects', type: 'folder', date: '2025-02-10' },
+      { name: 'documents', type: 'folder', date: '2025-02-09' },
+      { name: 'data', type: 'folder', date: '2025-02-08' },
+      { name: 'README.md', type: 'file', size: '2.1 KB', date: '2025-02-10', ext: 'md' },
+      { name: 'config.json', type: 'file', size: '856 B', date: '2025-02-09', ext: 'json' },
+      { name: 'diagram.png', type: 'file', size: '124 KB', date: '2025-02-08', ext: 'png' }
+    ],
+    projects: [
+      { name: 'app.js', type: 'file', size: '4.2 KB', date: '2025-02-10', ext: 'js' },
+      { name: 'style.css', type: 'file', size: '1.8 KB', date: '2025-02-09', ext: 'css' }
+    ],
+    documents: [
+      { name: 'notes.md', type: 'file', size: '3.5 KB', date: '2025-02-09', ext: 'md' },
+      { name: 'plan.txt', type: 'file', size: '1.2 KB', date: '2025-02-08', ext: 'txt' }
+    ],
+    data: [
+      { name: 'sales.csv', type: 'file', size: '45.6 KB', date: '2025-02-08', ext: 'csv' }
+    ]
+  };
+
+  var currentPath = 'root';
+  var sortField = 'name';
+  var sortAsc = true;
+
+  function renderFiles() {
+    var files = fileTree[currentPath] || [];
+    var tbody = document.getElementById('fileTableBody');
+    var search = document.getElementById('fileSearch').value.toLowerCase();
+
+    // Filter
+    var filtered = files.filter(function(f) {
+      return search === '' || f.name.toLowerCase().includes(search);
+    });
+
+    // Sort
+    filtered.sort(function(a, b) {
+      // Folders first
+      if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
+      var va, vb;
+      if (sortField === 'name') { va = a.name.toLowerCase(); vb = b.name.toLowerCase(); }
+      else if (sortField === 'size') { va = a.size || ''; vb = b.size || ''; }
+      else { va = a.date || ''; vb = b.date || ''; }
+      var cmp = va < vb ? -1 : va > vb ? 1 : 0;
+      return sortAsc ? cmp : -cmp;
+    });
+
+    tbody.innerHTML = '';
+    filtered.forEach(function(file) {
+      var tr = document.createElement('tr');
+      tr.className = 'file-row';
+
+      var icon = file.type === 'folder' ? '📁' : getFileIcon(file.ext);
+
+      tr.innerHTML =
+        '<td><div class="file-name"><span class="file-icon">' + icon + '</span><span class="file-text">' + file.name + '</span></div></td>' +
+        '<td class="file-size">' + (file.size || '—') + '</td>' +
+        '<td class="file-date">' + file.date + '</td>' +
+        '<td><div class="file-row-actions">' +
+          '<button class="icon-btn btn-sm" title="重命名" onclick="event.stopPropagation();renameFile(\'' + file.name + '\',this)">✏️</button>' +
+          '<button class="icon-btn btn-sm" title="删除" onclick="event.stopPropagation();deleteFile(\'' + file.name + '\')">🗑️</button>' +
+        '</div></td>';
+
+      // Double-click for folders, single click for files
+      if (file.type === 'folder') {
+        tr.ondblclick = function() { navigateTo(file.name); };
+      } else {
+        tr.onclick = function() { openFile(file); };
+      }
+
+      // Right-click context menu
+      tr.oncontextmenu = function(e) {
+        showContextMenu(e, [
+          { icon: '📂', label: '打开', action: function() { file.type === 'folder' ? navigateTo(file.name) : openFile(file); } },
+          { icon: '⬇️', label: '下载', action: function() { showToast('开始下载 ' + file.name, 'info'); } },
+          { icon: '✏️', label: '重命名', action: function() { renameFile(file.name); } },
+          { divider: true },
+          { icon: '🗑️', label: '删除', danger: true, action: function() { deleteFile(file.name); } }
+        ]);
+      };
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function getFileIcon(ext) {
+    var icons = { md: '📝', txt: '📄', json: '📋', js: '📜', css: '🎨', png: '🖼️', jpg: '🖼️', csv: '📊' };
+    return icons[ext] || '📄';
+  }
+
+  function navigateTo(dir) {
+    if (dir === 'root') {
+      currentPath = 'root';
+      updateBreadcrumb(['根目录']);
+    } else if (fileTree[dir]) {
+      currentPath = dir;
+      updateBreadcrumb(['根目录', dir]);
+    }
+    renderFiles();
+  }
+
+  function updateBreadcrumb(parts) {
+    var bc = document.getElementById('breadcrumb');
+    bc.innerHTML = '<span class="breadcrumb-item" onclick="navigateTo(\'root\')">📂 workspace</span>';
+    parts.forEach(function(part, i) {
+      bc.innerHTML += '<span class="breadcrumb-sep">/</span>';
+      if (i < parts.length - 1) {
+        bc.innerHTML += '<span class="breadcrumb-item" onclick="navigateTo(\'' + part + '\')">' + part + '</span>';
+      } else {
+        bc.innerHTML += '<span class="breadcrumb-item current">' + part + '</span>';
+      }
+    });
+  }
+
+  function sortFiles(field) {
+    if (sortField === field) {
+      sortAsc = !sortAsc;
+    } else {
+      sortField = field;
+      sortAsc = true;
+    }
+    renderFiles();
+  }
+
+  function filterFiles() {
+    renderFiles();
+  }
+
+  function openFile(file) {
+    if (file.ext === 'png' || file.ext === 'jpg') {
+      document.getElementById('lightbox').classList.remove('hidden');
+    } else if (file.ext === 'md' || file.ext === 'txt' || file.ext === 'json' || file.ext === 'js' || file.ext === 'css' || file.ext === 'csv') {
+      location.href = 'file-edit.html?file=' + encodeURIComponent(file.name);
+    } else {
+      showToast('下载文件: ' + file.name, 'info');
+    }
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.add('hidden');
+  }
+
+  function renameFile(name, btnEl) {
+    var rows = document.querySelectorAll('.file-row');
+    rows.forEach(function(row) {
+      var textEl = row.querySelector('.file-text');
+      if (textEl && textEl.textContent === name) {
+        var origName = textEl.textContent;
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'file-rename-input';
+        input.value = origName;
+        textEl.style.display = 'none';
+        textEl.parentNode.insertBefore(input, textEl.nextSibling);
+        input.focus();
+        input.select();
+
+        function finish() {
+          var newName = input.value.trim() || origName;
+          textEl.textContent = newName;
+          textEl.style.display = '';
+          if (input.parentNode) input.remove();
+          // Update data
+          var files = fileTree[currentPath];
+          var f = files.find(function(ff) { return ff.name === origName; });
+          if (f) f.name = newName;
+          if (newName !== origName) showToast('已重命名为 "' + newName + '"', 'success');
+        }
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') finish();
+          if (e.key === 'Escape') { input.value = origName; finish(); }
+        });
+        input.addEventListener('blur', finish);
+      }
+    });
+  }
+
+  function deleteFile(name) {
+    showModal('删除文件', '确定删除 "' + name + '" 吗？此操作不可撤回。', function() {
+      var files = fileTree[currentPath];
+      fileTree[currentPath] = files.filter(function(f) { return f.name !== name; });
+      renderFiles();
+      showToast('已删除 "' + name + '"', 'success');
+    });
+  }
+
+  function createFolder() {
+    var name = prompt('新文件夹名称:');
+    if (!name || !name.trim()) return;
+    name = name.trim();
+    fileTree[currentPath].unshift({ name: name, type: 'folder', date: '2025-02-10' });
+    fileTree[name] = [];
+    renderFiles();
+    showToast('已创建文件夹 "' + name + '"', 'success');
+  }
+
+  function createFile() {
+    var name = prompt('新文件名称:');
+    if (!name || !name.trim()) return;
+    name = name.trim();
+    var ext = name.split('.').pop() || 'txt';
+    fileTree[currentPath].push({ name: name, type: 'file', size: '0 B', date: '2025-02-10', ext: ext });
+    renderFiles();
+    showToast('已创建文件 "' + name + '"', 'success');
+  }
+
+  function handleUpload(input) {
+    var files = input.files;
+    for (var i = 0; i < files.length; i++) {
+      var f = files[i];
+      var ext = f.name.split('.').pop() || '';
+      var sizeStr = f.size > 1024 ? (f.size / 1024).toFixed(1) + ' KB' : f.size + ' B';
+      fileTree[currentPath].push({ name: f.name, type: 'file', size: sizeStr, date: '2025-02-10', ext: ext });
+    }
+    renderFiles();
+    showToast('已上传 ' + files.length + ' 个文件', 'success');
+    input.value = '';
+  }
+
+  // Drag and drop
+  var mainContent = document.querySelector('.main-content');
+  var dragOverlay = document.getElementById('dragOverlay');
+  var dragCounter = 0;
+
+  mainContent.addEventListener('dragenter', function(e) {
+    e.preventDefault();
+    dragCounter++;
+    dragOverlay.classList.add('visible');
+  });
+  mainContent.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    dragCounter--;
+    if (dragCounter === 0) dragOverlay.classList.remove('visible');
+  });
+  mainContent.addEventListener('dragover', function(e) {
+    e.preventDefault();
+  });
+  mainContent.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dragCounter = 0;
+    dragOverlay.classList.remove('visible');
+    var files = e.dataTransfer.files;
+    for (var i = 0; i < files.length; i++) {
+      var f = files[i];
+      var ext = f.name.split('.').pop() || '';
+      var sizeStr = f.size > 1024 ? (f.size / 1024).toFixed(1) + ' KB' : f.size + ' B';
+      fileTree[currentPath].push({ name: f.name, type: 'file', size: sizeStr, date: '2025-02-10', ext: ext });
+    }
+    renderFiles();
+    showToast('已上传 ' + files.length + ' 个文件', 'success');
+  });
+
+  // Esc to close lightbox
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  // Initial render
+  renderFiles();
+</script>
+
+</body>
+</html>
