@@ -135,14 +135,6 @@
             </div>
           </div>
         </div>
-        <div class="sidebar-section collapsed">
-          <div class="sidebar-section-header"><span>❌ 已取消</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="report" onclick="location.href='task-history.html'">
-              <span class="item-icon">⏰</span><span class="item-text">月度报告生成</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -168,6 +160,12 @@
         <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
         <span id="chatTitle">项目方案讨论</span>
       </div>
+      <div class="topbar-actions">
+        <span class="topbar-token" id="tokenUsage" onclick="toggleTokenPopover(event)">
+          <span class="token-icon">📊</span>
+          <span id="tokenText">1,247 / 128k</span>
+        </span>
+      </div>
     </div>
 
     <!-- Messages area (normal chat) -->
@@ -175,13 +173,17 @@
       <!-- User message 1 -->
       <div class="message message-user">
         <div class="avatar avatar-user">张</div>
-        <div class="message-content">帮我搜索一下 Vue3 的最新教程</div>
+        <div class="message-content">
+          <button class="message-actions-btn" onclick="showMessageActions(this,true)">⋯</button>
+          帮我搜索一下 Vue3 的最新教程
+          <div class="message-time">14:20</div>
+        </div>
       </div>
 
       <!-- Tool card (completed) -->
       <div class="tool-card" id="toolCard1" onclick="openToolPanel()">
         <span class="tool-card-icon">✅</span>
-        <span class="tool-card-text">执行了 3 个工具</span>
+        <span class="tool-card-text">搜索 → 读取网页 → 整理内容</span>
         <span class="tool-card-action">查看 →</span>
       </div>
 
@@ -189,7 +191,7 @@
       <div class="message message-ai">
         <div class="avatar avatar-ai">🐾</div>
         <div class="message-content md-content">
-          <button class="message-copy-btn" onclick="copyMessage(this)">复制</button>
+          <button class="message-actions-btn" onclick="showMessageActions(this,false)">⋯</button>
           <h3>Vue3 最新教程资源整理</h3>
           <p>我为你搜索了 Vue3 的最新学习资源，以下是推荐的教程：</p>
           <ul>
@@ -227,19 +229,24 @@ export default {
     return { count, doubled, increment }
   }
 }</code></pre>
+          <div class="message-time">14:20</div>
         </div>
       </div>
 
       <!-- User message 2 -->
       <div class="message message-user">
         <div class="avatar avatar-user">张</div>
-        <div class="message-content">把这些整理成一份学习路线图</div>
+        <div class="message-content">
+          <button class="message-actions-btn" onclick="showMessageActions(this,true)">⋯</button>
+          把这些整理成一份学习路线图
+          <div class="message-time">14:21</div>
+        </div>
       </div>
 
       <!-- Tool card (executing -> will complete) -->
       <div class="tool-card" id="toolCard2" onclick="openToolPanel()">
         <span class="tool-card-icon" id="toolCard2Icon">⚙️</span>
-        <span class="tool-card-text" id="toolCard2Text">正在执行工具...</span>
+        <span class="tool-card-text" id="toolCard2Text">搜索 → 读取网页 → 整理中...</span>
         <span class="tool-card-action">查看 →</span>
         <div class="thinking-indicator" id="toolCard2Loading" style="padding:0;margin-left:4px;">
           <div class="thinking-dot"></div>
@@ -252,7 +259,7 @@ export default {
       <div class="message message-ai" id="aiReply2">
         <div class="avatar avatar-ai">🐾</div>
         <div class="message-content md-content" id="aiReply2Content">
-          <button class="message-copy-btn" onclick="copyMessage(this)">复制</button>
+          <button class="message-actions-btn" onclick="showMessageActions(this,false)">⋯</button>
         </div>
       </div>
     </div>
@@ -430,7 +437,7 @@ export default {
     // Add user message
     var userMsg = document.createElement('div');
     userMsg.className = 'message message-user slide-up';
-    userMsg.innerHTML = '<div class="avatar avatar-user">张</div><div class="message-content">' + escapeHtml(text) + '</div>';
+    userMsg.innerHTML = '<div class="avatar avatar-user">张</div><div class="message-content"><button class="message-actions-btn" onclick="showMessageActions(this,true)">⋯</button>' + escapeHtml(text) + '<div class="message-time">' + getTimeStr() + '</div></div>';
     messagesArea.appendChild(userMsg);
 
     // Clear input
@@ -469,11 +476,11 @@ export default {
       var contentDiv = document.createElement('div');
       contentDiv.className = 'message-content md-content';
 
-      var copyBtn = document.createElement('button');
-      copyBtn.className = 'message-copy-btn';
-      copyBtn.textContent = '复制';
-      copyBtn.onclick = function() { copyMessage(copyBtn); };
-      contentDiv.appendChild(copyBtn);
+      var actionsBtn = document.createElement('button');
+      actionsBtn.className = 'message-actions-btn';
+      actionsBtn.textContent = '⋯';
+      actionsBtn.onclick = function() { showMessageActions(actionsBtn, false); };
+      contentDiv.appendChild(actionsBtn);
 
       var textSpan = document.createElement('span');
       contentDiv.appendChild(textSpan);
@@ -489,6 +496,10 @@ export default {
 
       currentTypewriter = typeWriter(textSpan, replyText, 20, function() {
         if (cursor.parentNode) cursor.remove();
+        var timeDiv = document.createElement('div');
+        timeDiv.className = 'message-time';
+        timeDiv.textContent = getTimeStr();
+        contentDiv.appendChild(timeDiv);
         isGenerating = false;
         stopBtn.classList.remove('visible');
       });
@@ -531,12 +542,122 @@ export default {
     }, 50);
   }
 
-  function copyMessage(btn) {
-    var content = btn.parentElement.textContent.replace('复制', '').trim();
-    navigator.clipboard.writeText(content).then(function() {
-      btn.textContent = '已复制';
-      setTimeout(function() { btn.textContent = '复制'; }, 1500);
+  /* Token popover */
+  var tokenData = {
+    system: 486,
+    history: 328,
+    current: 247,
+    tools: 186,
+    total: 1247,
+    limit: 128000
+  };
+
+  function toggleTokenPopover(e) {
+    e.stopPropagation();
+    var existing = document.querySelector('.token-popover');
+    if (existing) { existing.remove(); return; }
+
+    var popover = document.createElement('div');
+    popover.className = 'token-popover';
+
+    var pct = function(v) { return (v / tokenData.total * 100).toFixed(1); };
+    var fmt = function(v) { return v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v; };
+
+    popover.innerHTML =
+      '<div class="token-popover-title">Token 用量明细</div>' +
+      '<div class="token-row">' +
+        '<span class="token-label"><span class="dot" style="background:var(--accent)"></span>系统提示</span>' +
+        '<span class="token-value">' + fmt(tokenData.system) + ' (' + pct(tokenData.system) + '%)</span>' +
+      '</div>' +
+      '<div class="token-row">' +
+        '<span class="token-label"><span class="dot" style="background:var(--info)"></span>历史消息</span>' +
+        '<span class="token-value">' + fmt(tokenData.history) + ' (' + pct(tokenData.history) + '%)</span>' +
+      '</div>' +
+      '<div class="token-row">' +
+        '<span class="token-label"><span class="dot" style="background:var(--success)"></span>当前对话</span>' +
+        '<span class="token-value">' + fmt(tokenData.current) + ' (' + pct(tokenData.current) + '%)</span>' +
+      '</div>' +
+      '<div class="token-row">' +
+        '<span class="token-label"><span class="dot" style="background:var(--warning)"></span>工具调用</span>' +
+        '<span class="token-value">' + fmt(tokenData.tools) + ' (' + pct(tokenData.tools) + '%)</span>' +
+      '</div>' +
+      '<div class="token-row" style="font-weight:600;">' +
+        '<span class="token-label">合计</span>' +
+        '<span class="token-value">' + fmt(tokenData.total) + ' / ' + fmt(tokenData.limit) + '</span>' +
+      '</div>' +
+      '<div class="token-bar-mini">' +
+        '<div class="token-bar-seg" style="width:' + pct(tokenData.system) + '%;background:var(--accent)"></div>' +
+        '<div class="token-bar-seg" style="width:' + pct(tokenData.history) + '%;background:var(--info)"></div>' +
+        '<div class="token-bar-seg" style="width:' + pct(tokenData.current) + '%;background:var(--success)"></div>' +
+        '<div class="token-bar-seg" style="width:' + pct(tokenData.tools) + '%;background:var(--warning)"></div>' +
+      '</div>';
+
+    document.getElementById('tokenUsage').appendChild(popover);
+
+    // Close on outside click
+    setTimeout(function() {
+      document.addEventListener('click', function closePopover(ev) {
+        if (!popover.contains(ev.target)) {
+          popover.remove();
+          document.removeEventListener('click', closePopover);
+        }
+      });
+    }, 0);
+  }
+
+  function getTimeStr() {
+    var now = new Date();
+    var h = now.getHours();
+    var m = now.getMinutes();
+    return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+  }
+
+  function showMessageActions(btn, isUser) {
+    var messageEl = btn.closest('.message');
+    var items = [
+      { icon: '📋', label: '复制', action: function() { copyMessageContent(messageEl); } }
+    ];
+    if (isUser) {
+      items.push({ icon: '✏️', label: '编辑重发', action: function() { editAndResend(messageEl); } });
+    } else {
+      items.push({ icon: '🔄', label: '重新生成', action: function() { regenerateReply(messageEl); } });
+    }
+    items.push({ divider: true });
+    items.push({ icon: '🗑️', label: '删除', danger: true, action: function() { deleteMessage(messageEl); } });
+    showDropdown(btn, items);
+  }
+
+  function copyMessageContent(messageEl) {
+    var content = messageEl.querySelector('.message-content');
+    var clone = content.cloneNode(true);
+    var btns = clone.querySelectorAll('.message-actions-btn, .message-time');
+    btns.forEach(function(el) { el.remove(); });
+    var text = clone.textContent.trim();
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('已复制', 'success');
     });
+  }
+
+  function deleteMessage(messageEl) {
+    messageEl.style.opacity = '0';
+    messageEl.style.transform = 'translateY(-10px)';
+    messageEl.style.transition = 'all 0.3s ease';
+    setTimeout(function() { messageEl.remove(); }, 300);
+  }
+
+  function regenerateReply(messageEl) {
+    showToast('重新生成中...', 'info');
+  }
+
+  function editAndResend(messageEl) {
+    var content = messageEl.querySelector('.message-content');
+    var clone = content.cloneNode(true);
+    var extras = clone.querySelectorAll('.message-actions-btn, .message-time');
+    extras.forEach(function(el) { el.remove(); });
+    chatInput.value = clone.textContent.trim();
+    chatInput.focus();
+    autoResize(chatInput);
+    sendBtn.disabled = false;
   }
 
   function copyCode(btn) {
@@ -627,7 +748,7 @@ export default {
     var text = document.getElementById('toolCard2Text');
     var loading = document.getElementById('toolCard2Loading');
     if (icon) icon.textContent = '✅';
-    if (text) text.textContent = '执行了 3 个工具';
+    if (text) text.textContent = '搜索 → 读取网页 → 整理内容';
     if (loading) loading.style.display = 'none';
   }, 3000);
 
@@ -653,6 +774,10 @@ export default {
 
     currentTypewriter = typeWriter(textSpan, replyHtml, 15, function() {
       if (cursor.parentNode) cursor.remove();
+      var timeDiv = document.createElement('div');
+      timeDiv.className = 'message-time';
+      timeDiv.textContent = '14:22';
+      el.appendChild(timeDiv);
       scrollToBottom();
     });
   }, 3500);

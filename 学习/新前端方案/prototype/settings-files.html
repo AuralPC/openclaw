@@ -124,14 +124,6 @@
             </div>
           </div>
         </div>
-        <div class="sidebar-section collapsed">
-          <div class="sidebar-section-header"><span>❌ 已取消</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="report" onclick="location.href='task-history.html'">
-              <span class="item-icon">⏰</span><span class="item-text">月度报告生成</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -176,8 +168,10 @@
                 <div class="file-title" id="editorTitle">SOUL.md</div>
                 <div class="file-meta" id="editorMeta">最后更新：2025-02-10 14:30</div>
               </div>
+              <button class="preview-toggle" id="previewBtn" onclick="togglePreview()">👁 预览</button>
             </div>
             <div class="agent-file-desc" id="editorDesc">定义 AI 的核心人设、性格特征和回复风格</div>
+            <div class="agent-file-preview md-content" id="previewArea"></div>
             <textarea class="agent-file-textarea" id="editorArea" spellcheck="false"></textarea>
             <div class="agent-file-actions">
               <button class="btn btn-secondary" onclick="resetFile()">重置</button>
@@ -296,6 +290,63 @@
   function resetFile() {
     document.getElementById('editorArea').value = originalContent;
     showToast('已重置', 'info');
+  }
+
+  var previewMode = false;
+
+  function togglePreview() {
+    previewMode = !previewMode;
+    var btn = document.getElementById('previewBtn');
+    var textarea = document.getElementById('editorArea');
+    var preview = document.getElementById('previewArea');
+
+    if (previewMode) {
+      btn.classList.add('active');
+      btn.textContent = '✏️ 编辑';
+      preview.innerHTML = renderMarkdown(textarea.value);
+      preview.classList.add('visible');
+      textarea.classList.add('preview-hidden');
+    } else {
+      btn.classList.remove('active');
+      btn.textContent = '👁 预览';
+      preview.classList.remove('visible');
+      textarea.classList.remove('preview-hidden');
+    }
+  }
+
+  function renderMarkdown(md) {
+    if (!md) return '<p style="color:var(--text-muted);font-style:italic;">暂无内容</p>';
+    var html = md
+      // Code blocks
+      .replace(/```(\w*)\n([\s\S]*?)```/g, function(m, lang, code) {
+        return '<pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>';
+      })
+      // Headers
+      .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+      .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+      // Bold
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      // Italic
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      // Inline code
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      // Horizontal rule
+      .replace(/^---$/gm, '<hr>')
+      // Unordered list items
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      // Paragraphs (double newline)
+      .replace(/\n\n/g, '</p><p>')
+      // Single newlines become <br>
+      .replace(/\n/g, '<br>');
+
+    // Wrap consecutive <li> in <ul>
+    html = html.replace(/(<li>.*?<\/li>(<br>)?)+/g, function(match) {
+      return '<ul>' + match.replace(/<br>/g, '') + '</ul>';
+    });
+
+    return '<p>' + html + '</p>';
   }
 
   // Init

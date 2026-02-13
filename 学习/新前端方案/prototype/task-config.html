@@ -124,14 +124,6 @@
             </div>
           </div>
         </div>
-        <div class="sidebar-section collapsed">
-          <div class="sidebar-section-header"><span>❌ 已取消</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="report" onclick="location.href='task-history.html'">
-              <span class="item-icon">⏰</span><span class="item-text">月度报告生成</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -174,7 +166,10 @@
 
             <!-- Summary: natural language + cron expression -->
             <div class="cron-summary">
-              <div class="cron-summary-text" id="cronDesc">每天 08:00 执行</div>
+              <div>
+                <div class="cron-summary-text" id="cronDesc">每天 08:00 执行</div>
+                <div class="cron-next-run" id="cronNext">下次执行：计算中...</div>
+              </div>
               <div class="cron-summary-expr">
                 <span class="cron-expr-label">Cron</span>
                 <code class="cron-expr-value" id="cronValue">0 8 * * *</code>
@@ -321,7 +316,12 @@
           </div>
         </div>
 
-        <button class="btn btn-primary btn-lg" onclick="saveConfig()" id="saveBtn">保存配置</button>
+        <div style="display:flex;align-items:center;gap:var(--spacing-md);flex-wrap:wrap;">
+          <button class="btn btn-primary btn-lg" onclick="saveConfig()" id="saveBtn">保存配置</button>
+          <button class="btn btn-secondary btn-lg" onclick="location.href='task-history.html'">取消</button>
+          <div style="flex:1;"></div>
+          <button class="btn btn-danger btn-sm" onclick="deleteTask()">删除任务</button>
+        </div>
       </div>
     </div>
   </main>
@@ -476,6 +476,7 @@
   function setCronDisplay(cron, desc) {
     document.getElementById('cronValue').textContent = cron;
     document.getElementById('cronDesc').textContent = desc;
+    document.getElementById('cronNext').textContent = '下次执行：' + getNextExecution();
   }
 
   function syncDirectFields(cron) {
@@ -541,6 +542,59 @@
       return '每月 ' + dom + ' 日 ' + pad2(hour) + ':' + pad2(min) + ' 执行';
     }
     return min + ' ' + hour + ' ' + dom + ' ' + mon + ' ' + dow;
+  }
+
+  /* -- Next execution time -- */
+  function getNextExecution() {
+    var now = new Date();
+    var next = new Date();
+
+    if (currentFreq === 'hourly') {
+      var m = parseInt(document.getElementById('cronMinuteH').value) || 0;
+      next.setMinutes(m, 0, 0);
+      if (next <= now) next.setHours(next.getHours() + 1);
+    } else if (currentFreq === 'daily') {
+      var h = parseInt(document.getElementById('cronHourD').value) || 0;
+      var m = parseInt(document.getElementById('cronMinuteD').value) || 0;
+      next.setHours(h, m, 0, 0);
+      if (next <= now) next.setDate(next.getDate() + 1);
+    } else if (currentFreq === 'weekly') {
+      var h = parseInt(document.getElementById('cronHourW').value) || 0;
+      var m = parseInt(document.getElementById('cronMinuteW').value) || 0;
+      var days = [];
+      document.querySelectorAll('#cronWeekdays input:checked').forEach(function(cb) { days.push(parseInt(cb.value)); });
+      if (days.length === 0) days = [0,1,2,3,4,5,6];
+      for (var i = 0; i < 8; i++) {
+        var check = new Date(now.getTime() + i * 86400000);
+        check.setHours(h, m, 0, 0);
+        if (days.indexOf(check.getDay()) !== -1 && check > now) { next = check; break; }
+      }
+    } else if (currentFreq === 'monthly') {
+      var d = parseInt(document.getElementById('cronDayM').value) || 1;
+      var h = parseInt(document.getElementById('cronHourM').value) || 0;
+      var m = parseInt(document.getElementById('cronMinuteM').value) || 0;
+      next.setDate(d);
+      next.setHours(h, m, 0, 0);
+      if (next <= now) { next.setMonth(next.getMonth() + 1); next.setDate(d); }
+    }
+
+    return formatNextDate(next);
+  }
+
+  function formatNextDate(d) {
+    var y = d.getFullYear();
+    var mo = d.getMonth() + 1;
+    var da = d.getDate();
+    var h = d.getHours();
+    var mi = d.getMinutes();
+    return y + '-' + pad2(mo) + '-' + pad2(da) + ' ' + pad2(h) + ':' + pad2(mi);
+  }
+
+  function deleteTask() {
+    showModal('删除任务', '确定删除任务「每日新闻摘要」吗？此操作不可撤回。', function() {
+      showToast('任务已删除', 'success');
+      setTimeout(function() { location.href = 'chat.html'; }, 500);
+    });
   }
 
   // Init

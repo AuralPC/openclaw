@@ -124,14 +124,6 @@
             </div>
           </div>
         </div>
-        <div class="sidebar-section collapsed">
-          <div class="sidebar-section-header"><span>❌ 已取消</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="report" onclick="location.href='task-history.html'">
-              <span class="item-icon">⏰</span><span class="item-text">月度报告生成</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -158,6 +150,23 @@
     </div>
 
     <div class="task-records" id="taskRecords">
+      <!-- Task summary -->
+      <div class="task-summary-bar">
+        <div class="task-summary-info">
+          <span class="task-summary-schedule">⏰ 每天 08:00</span>
+          <span class="task-summary-sep">|</span>
+          <span class="task-summary-content">搜索今天的科技新闻，整理成摘要...</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="location.href='task-config.html'">编辑 →</button>
+      </div>
+
+      <!-- Filter -->
+      <div class="task-filter-bar">
+        <button class="task-filter-btn active" onclick="filterRecords('all',this)">全部 (3)</button>
+        <button class="task-filter-btn" onclick="filterRecords('success',this)">成功 (2)</button>
+        <button class="task-filter-btn" onclick="filterRecords('error',this)">失败 (1)</button>
+      </div>
+
       <!-- Record 1 - Success -->
       <div class="task-record" onclick="toggleRecord(this)">
         <div class="task-record-header">
@@ -223,6 +232,10 @@
       <div class="manual-execute-btn">
         <button class="btn btn-secondary btn-lg" id="manualExecBtn" onclick="manualExecute()">▶ 手动执行一次</button>
       </div>
+
+      <div class="load-more-link">
+        <a href="#" onclick="event.preventDefault();showToast('已加载更多记录','info')">查看更多历史记录 ↓</a>
+      </div>
     </div>
   </main>
 </div>
@@ -231,6 +244,20 @@
 <script>
   function toggleRecord(record) {
     record.classList.toggle('expanded');
+  }
+
+  function filterRecords(type, btn) {
+    document.querySelectorAll('.task-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.task-record').forEach(function(record) {
+      if (type === 'all') {
+        record.style.display = '';
+      } else if (type === 'success') {
+        record.style.display = record.querySelector('.badge-success') ? '' : 'none';
+      } else if (type === 'error') {
+        record.style.display = record.querySelector('.badge-error') ? '' : 'none';
+      }
+    });
   }
 
   function manualExecute() {

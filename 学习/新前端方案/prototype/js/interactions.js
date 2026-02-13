@@ -722,6 +722,7 @@ function initSidebarContextMenu() {
       e.stopPropagation();
       var isPinned = item.hasAttribute('data-pinned');
       var isArchived = item.hasAttribute('data-archived');
+      var isInTaskTab = !!item.closest('#sidebar-tasks');
       var menuItems = [];
 
       // Pin / Unpin
@@ -733,17 +734,18 @@ function initSidebarContextMenu() {
 
       menuItems.push({ icon: '✏️', label: '重命名', action: function() { startRename(item); } });
 
-      // Move to folder (submenu) — dynamically read all folder sections
-      var folderChildren = getFolderMenuItems(item);
-      if (folderChildren.length > 0) {
-        menuItems.push({ icon: '📁', label: '移动到文件夹', children: folderChildren });
-      }
+      // Move to folder & Archive — only for chats, not tasks
+      if (!isInTaskTab) {
+        var folderChildren = getFolderMenuItems(item);
+        if (folderChildren.length > 0) {
+          menuItems.push({ icon: '📁', label: '移动到文件夹', children: folderChildren });
+        }
 
-      // Archive / Unarchive
-      if (isArchived) {
-        menuItems.push({ icon: '📤', label: '取消归档', action: function() { unarchiveItem(item); } });
-      } else {
-        menuItems.push({ icon: '🗄️', label: '归档', action: function() { archiveItem(item); } });
+        if (isArchived) {
+          menuItems.push({ icon: '📤', label: '取消归档', action: function() { unarchiveItem(item); } });
+        } else {
+          menuItems.push({ icon: '🗄️', label: '归档', action: function() { archiveItem(item); } });
+        }
       }
 
       menuItems.push({ divider: true });
@@ -933,15 +935,116 @@ function initPanelResize() {
   }
 }
 
-/* ========== 10. DOMContentLoaded Init ========== */
+/* ========== 10. Page Loading Bar ========== */
+
+function createLoadingBar() {
+  var bar = document.createElement('div');
+  bar.className = 'page-loading-bar';
+  document.body.appendChild(bar);
+  return bar;
+}
+
+function showPageLoading() {
+  var bar = document.querySelector('.page-loading-bar') || createLoadingBar();
+  bar.style.transition = 'none';
+  bar.style.width = '0';
+  bar.style.opacity = '1';
+  // Force reflow
+  bar.offsetWidth;
+  bar.style.transition = 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease';
+  bar.style.width = '85%';
+}
+
+function finishPageLoading() {
+  var bar = document.querySelector('.page-loading-bar');
+  if (!bar) return;
+  bar.style.transition = 'width 0.2s ease, opacity 0.3s ease 0.2s';
+  bar.style.width = '100%';
+  bar.style.opacity = '0';
+}
+
+// Intercept <a> clicks to show loading bar
+function initLoadingBarInterception() {
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('a[href]');
+    if (link && link.href && !link.href.startsWith('javascript') && !link.href.startsWith('#')) {
+      showPageLoading();
+    }
+  });
+
+  // Intercept location.href assignments: provide a helper
+  var origLocationAssign = window.location.assign;
+  window.navigateTo = function(url) {
+    showPageLoading();
+    setTimeout(function() { window.location.href = url; }, 50);
+  };
+}
+
+/* ========== 11. Sidebar Task Empty State ========== */
+
+function initTaskEmptyState() {
+  var taskPane = document.getElementById('sidebar-tasks');
+  if (!taskPane) return;
+
+  // Check if empty state element already exists
+  var emptyState = taskPane.querySelector('.sidebar-empty-state');
+  if (!emptyState) {
+    emptyState = document.createElement('div');
+    emptyState.className = 'sidebar-empty-state';
+    emptyState.innerHTML =
+      '<div class="empty-icon">📋</div>' +
+      '<div class="empty-text">暂无定期任务</div>' +
+      '<span class="empty-action" onclick="location.href=\'task-config.html\'">+ 创建第一个任务</span>';
+    taskPane.appendChild(emptyState);
+  }
+
+  checkTaskEmptyState();
+}
+
+function checkTaskEmptyState() {
+  var taskPane = document.getElementById('sidebar-tasks');
+  if (!taskPane) return;
+  var emptyState = taskPane.querySelector('.sidebar-empty-state');
+  if (!emptyState) return;
+
+  var items = taskPane.querySelectorAll('.sidebar-item');
+  var hasVisible = false;
+  items.forEach(function(item) {
+    if (item.offsetParent !== null && item.style.display !== 'none') {
+      hasVisible = true;
+    }
+  });
+
+  if (hasVisible) {
+    emptyState.classList.remove('visible');
+  } else {
+    emptyState.classList.add('visible');
+  }
+}
+
+/* ========== 12. DOMContentLoaded Init ========== */
 
 document.addEventListener('DOMContentLoaded', function() {
+  // Page load complete animation
+  var bar = createLoadingBar();
+  bar.style.transition = 'none';
+  bar.style.width = '70%';
+  bar.style.opacity = '1';
+  bar.offsetWidth;
+  finishPageLoading();
+
+  // Intercept future navigations
+  initLoadingBarInterception();
+
   // Init sidebar
   initSidebarSections();
   initSidebarSearch();
   initSidebarContextMenu();
   initSidebarItemActions();
   initFolderContextMenu();
+
+  // Init task empty state
+  initTaskEmptyState();
 
   // Init tab bars
   initTabBar();

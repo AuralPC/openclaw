@@ -124,14 +124,6 @@
             </div>
           </div>
         </div>
-        <div class="sidebar-section collapsed">
-          <div class="sidebar-section-header"><span>❌ 已取消</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="report" onclick="location.href='task-history.html'">
-              <span class="item-icon">⏰</span><span class="item-text">月度报告生成</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -196,8 +188,8 @@
     {
       name: '工作区技能',
       skills: [
-        { id: 'file-rw', icon: '📝', name: '文件读写', desc: '读取和写入本地文件', enabled: true },
-        { id: 'cmd-exec', icon: '🖥️', name: '命令执行', desc: '在终端中执行命令', enabled: true },
+        { id: 'file-rw', icon: '📝', name: '文件读写', desc: '读取和写入本地文件', enabled: true, config: [{ label: '根目录', key: 'root', value: '/workspace' }] },
+        { id: 'cmd-exec', icon: '🖥️', name: '命令执行', desc: '在终端中执行命令', enabled: true, config: [{ label: '超时(秒)', key: 'timeout', value: '30' }] },
         { id: 'code-analyze', icon: '🔧', name: '代码分析', desc: '分析代码结构和质量', enabled: false }
       ]
     },
@@ -215,10 +207,10 @@
     {
       name: '已安装技能',
       skills: [
-        { id: 'github', icon: '🐙', name: 'GitHub 集成', desc: '管理仓库、PR 和 Issues', enabled: true },
-        { id: 'slack', icon: '💬', name: 'Slack 通知', desc: '发送消息到 Slack 频道', enabled: true, warning: '需要配置 SLACK_WEBHOOK_URL 环境变量' },
-        { id: 'db-query', icon: '🗄️', name: '数据库查询', desc: '执行 SQL 查询和分析', enabled: false },
-        { id: 'email', icon: '📧', name: '邮件发送', desc: '发送和管理电子邮件', enabled: true }
+        { id: 'github', icon: '🐙', name: 'GitHub 集成', desc: '管理仓库、PR 和 Issues', enabled: true, config: [{ label: 'Token', key: 'token', value: 'ghp_xxxx...' }] },
+        { id: 'slack', icon: '💬', name: 'Slack 通知', desc: '发送消息到 Slack 频道', enabled: true, warning: '需要配置 SLACK_WEBHOOK_URL 环境变量', config: [{ label: 'Webhook URL', key: 'webhook', value: '' }, { label: '频道', key: 'channel', value: '#general' }] },
+        { id: 'db-query', icon: '🗄️', name: '数据库查询', desc: '执行 SQL 查询和分析', enabled: false, config: [{ label: '连接串', key: 'dsn', value: '' }] },
+        { id: 'email', icon: '📧', name: '邮件发送', desc: '发送和管理电子邮件', enabled: true, config: [{ label: 'SMTP 地址', key: 'smtp', value: 'smtp.example.com' }, { label: '发件邮箱', key: 'from', value: 'noreply@example.com' }] }
       ]
     }
   ];
@@ -251,17 +243,30 @@
       filteredSkills.forEach(function(skill) {
         var item = document.createElement('div');
         item.className = 'skill-item';
+        item.setAttribute('data-skill-id', skill.id);
+
+        var configHtml = '';
+        if (skill.config && skill.config.length > 0) {
+          var fieldsHtml = skill.config.map(function(c) {
+            return '<div class="skill-config-field"><label>' + c.label + '</label><input type="text" value="' + (c.value || '') + '" placeholder="请输入' + c.label + '"></div>';
+          }).join('');
+          configHtml = '<div class="skill-config">' + fieldsHtml + '</div>';
+        } else {
+          configHtml = '<div class="skill-config"><span class="skill-config-none">无额外配置项</span></div>';
+        }
+
         item.innerHTML =
           '<span class="skill-icon">' + skill.icon + '</span>' +
           '<div class="skill-info">' +
-            '<div class="skill-name">' + skill.name + '</div>' +
+            '<div class="skill-name skill-name-clickable" onclick="toggleSkillConfig(\'' + skill.id + '\')">' + skill.name + '</div>' +
             '<div class="skill-desc">' + skill.desc + '</div>' +
             (skill.warning ? '<div class="skill-warning">⚠️ ' + skill.warning + '</div>' : '') +
           '</div>' +
           '<label class="toggle">' +
             '<input type="checkbox" ' + (skill.enabled ? 'checked' : '') + ' onchange="toggleSkill(\'' + skill.id + '\',this.checked)">' +
             '<span class="toggle-slider"></span>' +
-          '</label>';
+          '</label>' +
+          configHtml;
         listEl.appendChild(item);
       });
 
@@ -306,6 +311,13 @@
 
   function saveSkills() {
     showToast('技能配置已保存', 'success');
+  }
+
+  function toggleSkillConfig(id) {
+    var item = document.querySelector('.skill-item[data-skill-id="' + id + '"]');
+    if (item) {
+      item.classList.toggle('config-open');
+    }
   }
 
   // Init

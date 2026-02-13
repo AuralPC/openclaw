@@ -26,6 +26,13 @@
         <label class="form-label">密码</label>
         <input type="password" class="form-input" id="loginPassword" placeholder="请输入密码" autocomplete="current-password">
       </div>
+      <div class="auth-extras">
+        <label class="remember-me" onclick="toggleRememberMe(this)">
+          <span class="mini-toggle"></span>
+          <span>记住我</span>
+        </label>
+        <a class="forgot-link" onclick="forgotPassword()">忘记密码？</a>
+      </div>
       <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginBtn">登 录</button>
     </form>
 
@@ -88,6 +95,15 @@
       authError.classList.remove('visible');
       passwordInput.classList.remove('error');
     });
+
+    function toggleRememberMe(label) {
+      var toggle = label.querySelector('.mini-toggle');
+      toggle.classList.toggle('on');
+    }
+
+    function forgotPassword() {
+      showToast('请联系管理员重置密码', 'info');
+    }
   </script>
 </body>
 </html>
