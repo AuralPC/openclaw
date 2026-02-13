@@ -1,368 +1,415 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OpenClaw - Agent 文件</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-<div class="app-layout">
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-toggle" onclick="toggleSidebar()" title="折叠侧边栏">◀</div>
-    <div class="sidebar-header">
-      <div class="sidebar-tabs">
-        <button class="sidebar-tab active" data-tab="chats" onclick="switchSidebarTab('chats')">会话</button>
-        <button class="sidebar-tab" data-tab="tasks" onclick="switchSidebarTab('tasks')">任务</button>
-      </div>
-      <div class="sidebar-actions">
-        <div class="action-row" id="chatActions">
-          <button class="sidebar-btn" onclick="location.href='chat.html'">＋ 新聊天</button>
-          <button class="sidebar-btn" onclick="location.href='files.html'">📂 文件</button>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-toggle" onclick="toggleSidebar()" title="折叠侧边栏">◀</div>
+      <div class="sidebar-header">
+        <div class="sidebar-tabs">
+          <button class="sidebar-tab active" data-tab="chats" onclick="switchSidebarTab('chats')">会话</button>
+          <button class="sidebar-tab" data-tab="tasks" onclick="switchSidebarTab('tasks')">任务</button>
         </div>
-        <div class="action-row" id="taskActions" style="display:none">
-          <button class="sidebar-btn" onclick="location.href='task-config.html'">＋ 新任务</button>
-        </div>
-      </div>
-      <div class="sidebar-search">
-        <span class="search-icon">🔍</span>
-        <input type="text" placeholder="搜索会话...">
-      </div>
-    </div>
-    <div class="sidebar-content">
-      <div class="sidebar-tab-pane active" id="sidebar-chats">
-        <div class="sidebar-section" id="section-pinned">
-          <div class="sidebar-section-header"><span>📌 置顶</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="project" data-pinned="true" onclick="location.href='chat.html'">
-              <span class="item-icon">💬</span><span class="item-text">项目方案讨论</span>
-              <span class="item-badge indicator-dot indicator-dot-accent"></span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
+        <div class="sidebar-actions">
+          <div class="action-row" id="chatActions">
+            <button class="sidebar-btn" onclick="location.href='chat.html'">＋ 新聊天</button>
+            <button class="sidebar-btn" onclick="location.href='files.html'">📂 文件</button>
+          </div>
+          <div class="action-row" id="taskActions" style="display:none">
+            <button class="sidebar-btn" onclick="location.href='task-config.html'">＋ 新任务</button>
           </div>
         </div>
-        <div class="sidebar-section" id="section-recent">
-          <div class="sidebar-section-header"><span>💬 最近</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="vue3" onclick="location.href='chat.html'">
-              <span class="item-icon">💬</span><span class="item-text">Vue3 学习路线</span>
-              <span class="item-badge indicator-dot indicator-dot-accent"></span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-            <div class="sidebar-item" data-session="debug" onclick="location.href='chat.html'">
-              <span class="item-icon">💬</span><span class="item-text">API 调试帮助</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-            <div class="sidebar-item" data-session="python" onclick="location.href='chat.html'">
-              <span class="item-icon">💬</span><span class="item-text">Python 数据分析</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
-        </div>
-        <div class="sidebar-section" id="section-work">
-          <div class="sidebar-section-header"><span>📁 工作</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="review" data-folder="work" onclick="location.href='chat.html'">
-              <span class="item-icon">💬</span><span class="item-text">代码审查</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
-        </div>
-        <div class="sidebar-section" id="section-learn">
-          <div class="sidebar-section-header"><span>📁 学习</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="vue-note" data-folder="learn" onclick="location.href='chat.html'">
-              <span class="item-icon">💬</span><span class="item-text">Vue3 笔记</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-            <div class="sidebar-item" data-session="algo" data-folder="learn" onclick="location.href='chat.html'">
-              <span class="item-icon">💬</span><span class="item-text">算法练习</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
-        </div>
-        <div class="add-folder-btn" onclick="createSidebarFolder()">＋ 新建文件夹</div>
-        <div class="sidebar-section collapsed" id="section-archive">
-          <div class="sidebar-section-header"><span>🗄️ 归档</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="old" data-archived="true" onclick="location.href='chat.html'">
-              <span class="item-icon">💬</span><span class="item-text">旧项目讨论</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
+        <div class="sidebar-search">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="搜索会话...">
         </div>
       </div>
-      <div class="sidebar-tab-pane" id="sidebar-tasks">
-        <div class="sidebar-section">
-          <div class="sidebar-section-header"><span>🔔 有更新</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="daily" onclick="location.href='task-history.html'">
-              <span class="item-icon">⏰</span><span class="item-text">每日新闻摘要</span>
-              <span class="item-badge indicator-dot indicator-dot-accent"></span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-header"><span>🟢 运行中</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="weekly" onclick="location.href='task-history.html'">
-              <span class="item-icon">⏰</span><span class="item-text">周报整理</span>
-              <span class="item-badge indicator-dot indicator-dot-pulse"></span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-header"><span>⏸ 已暂停</span><span class="chevron">▼</span></div>
-          <div class="sidebar-section-items">
-            <div class="sidebar-item" data-session="backup" onclick="location.href='task-history.html'">
-              <span class="item-icon">⏰</span><span class="item-text">数据库备份</span>
-              <div class="item-actions"><button class="item-action-btn" data-action="rename" title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button></div>
-            </div>
-          </div>
-        </div>
-        </div>
-      </div>
-    </div>
-    <div class="sidebar-footer">
-      <div class="user-area" onclick="showDropdown(this, [{icon:'⚙️',label:'设置',action:function(){location.href='settings.html'}},{divider:true},{icon:'🚪',label:'退出登录',danger:true,action:function(){location.href='login.html'}}])">
-        <div class="user-avatar">张</div>
-        <div class="user-info"><div class="user-name">张三</div></div>
-      </div>
-    </div>
-  </aside>
-
-  <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
-
-  <!-- Main content -->
-  <main class="main-content">
-    <div class="topbar">
-      <div class="topbar-title">
-        <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
-        <span>设置</span>
-      </div>
-    </div>
-
-    <div class="tab-container" style="flex:1;overflow-y:auto;">
-      <div class="tab-bar">
-        <button class="tab-btn" onclick="window.location.href='settings.html'">个人设置</button>
-        <button class="tab-btn active" onclick="window.location.href='settings-files.html'">Agent 文件</button>
-        <button class="tab-btn" onclick="window.location.href='settings-skills.html'">Agent 技能</button>
-        <div class="tab-indicator" id="tabIndicator"></div>
-      </div>
-
-      <div class="settings-container settings-container--wide">
-        <div class="agent-files-layout" id="agentFilesLayout">
-          <!-- File list -->
-          <div class="agent-file-list" id="fileList">
-            <!-- Rendered by JS -->
-          </div>
-
-          <!-- Editor -->
-          <div class="agent-file-editor">
-            <div class="agent-file-editor-header">
-              <div>
-                <div class="file-title" id="editorTitle">SOUL.md</div>
-                <div class="file-meta" id="editorMeta">最后更新：2025-02-10 14:30</div>
+      <div class="sidebar-content">
+        <div class="sidebar-tab-pane active" id="sidebar-chats">
+          <div class="sidebar-section" id="section-pinned">
+            <div class="sidebar-section-header"><span>📌 置顶</span><span class="chevron">▼</span></div>
+            <div class="sidebar-section-items">
+              <div class="sidebar-item" data-session="project" data-pinned="true" onclick="location.href='chat.html'">
+                <span class="item-icon">💬</span><span class="item-text">项目方案讨论</span>
+                <span class="item-badge indicator-dot indicator-dot-accent"></span>
+                <div class="item-actions"><button class="item-action-btn" data-action="rename"
+                    title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button>
+                </div>
               </div>
-              <button class="preview-toggle" id="previewBtn" onclick="togglePreview()">👁 预览</button>
             </div>
-            <div class="agent-file-desc" id="editorDesc">定义 AI 的核心人设、性格特征和回复风格</div>
-            <div class="agent-file-preview md-content" id="previewArea"></div>
-            <textarea class="agent-file-textarea" id="editorArea" spellcheck="false"></textarea>
-            <div class="agent-file-actions">
-              <button class="btn btn-secondary" onclick="resetFile()">重置</button>
-              <button class="btn btn-primary" onclick="saveAgentFile()">保存</button>
+          </div>
+          <div class="sidebar-section" id="section-recent">
+            <div class="sidebar-section-header"><span>💬 最近</span><span class="chevron">▼</span></div>
+            <div class="sidebar-section-items">
+              <div class="sidebar-item" data-session="vue3" onclick="location.href='chat.html'">
+                <span class="item-icon">💬</span><span class="item-text">Vue3 学习路线</span>
+                <span class="item-badge indicator-dot indicator-dot-accent"></span>
+                <div class="item-actions"><button class="item-action-btn" data-action="rename"
+                    title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button>
+                </div>
+              </div>
+              <div class="sidebar-item" data-session="debug" onclick="location.href='chat.html'">
+                <span class="item-icon">💬</span><span class="item-text">API 调试帮助</span>
+                <div class="item-actions"><button class="item-action-btn" data-action="rename"
+                    title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button>
+                </div>
+              </div>
+              <div class="sidebar-item" data-session="python" onclick="location.href='chat.html'">
+                <span class="item-icon">💬</span><span class="item-text">Python 数据分析</span>
+                <div class="item-actions"><button class="item-action-btn" data-action="rename"
+                    title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sidebar-section" id="section-work">
+            <div class="sidebar-section-header"><span>📁 工作</span><span class="chevron">▼</span></div>
+            <div class="sidebar-section-items">
+              <div class="sidebar-item" data-session="review" data-folder="work" onclick="location.href='chat.html'">
+                <span class="item-icon">💬</span><span class="item-text">代码审查</span>
+                <div class="item-actions"><button class="item-action-btn" data-action="rename"
+                    title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sidebar-section" id="section-learn">
+            <div class="sidebar-section-header"><span>📁 学习</span><span class="chevron">▼</span></div>
+            <div class="sidebar-section-items">
+              <div class="sidebar-item" data-session="vue-note" data-folder="learn" onclick="location.href='chat.html'">
+                <span class="item-icon">💬</span><span class="item-text">Vue3 笔记</span>
+                <div class="item-actions"><button class="item-action-btn" data-action="rename"
+                    title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button>
+                </div>
+              </div>
+              <div class="sidebar-item" data-session="algo" data-folder="learn" onclick="location.href='chat.html'">
+                <span class="item-icon">💬</span><span class="item-text">算法练习</span>
+                <div class="item-actions"><button class="item-action-btn" data-action="rename"
+                    title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="add-folder-btn" onclick="createSidebarFolder()">＋ 新建文件夹</div>
+          <div class="sidebar-section collapsed" id="section-archive">
+            <div class="sidebar-section-header"><span>🗄️ 归档</span><span class="chevron">▼</span></div>
+            <div class="sidebar-section-items">
+              <div class="sidebar-item" data-session="old" data-archived="true" onclick="location.href='chat.html'">
+                <span class="item-icon">💬</span><span class="item-text">旧项目讨论</span>
+                <div class="item-actions"><button class="item-action-btn" data-action="rename"
+                    title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-tab-pane" id="sidebar-tasks">
+          <div class="sidebar-section">
+            <div class="sidebar-section-header"><span>🔔 有更新</span><span class="chevron">▼</span></div>
+            <div class="sidebar-section-items">
+              <div class="sidebar-item" data-session="daily" onclick="location.href='task-history.html'">
+                <span class="item-icon">⏰</span><span class="item-text">每日新闻摘要</span>
+                <span class="item-badge indicator-dot indicator-dot-accent"></span>
+                <div class="item-actions"><button class="item-action-btn" data-action="rename"
+                    title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sidebar-section">
+            <div class="sidebar-section-header"><span>🟢 运行中</span><span class="chevron">▼</span></div>
+            <div class="sidebar-section-items">
+              <div class="sidebar-item" data-session="weekly" onclick="location.href='task-history.html'">
+                <span class="item-icon">⏰</span><span class="item-text">周报整理</span>
+                <span class="item-badge indicator-dot indicator-dot-pulse"></span>
+                <div class="item-actions"><button class="item-action-btn" data-action="rename"
+                    title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sidebar-section">
+            <div class="sidebar-section-header"><span>⏸ 已暂停</span><span class="chevron">▼</span></div>
+            <div class="sidebar-section-items">
+              <div class="sidebar-item" data-session="backup" onclick="location.href='task-history.html'">
+                <span class="item-icon">⏰</span><span class="item-text">数据库备份</span>
+                <div class="item-actions"><button class="item-action-btn" data-action="rename"
+                    title="重命名">✏️</button><button class="item-action-btn" data-action="delete" title="删除">🗑️</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
-</div>
+      <div class="sidebar-footer">
+        <div class="user-area"
+          onclick="showDropdown(this, [{icon:'⚙️',label:'设置',action:function(){location.href='settings.html'}},{divider:true},{icon:'🚪',label:'退出登录',danger:true,action:function(){location.href='login.html'}}])">
+          <div class="user-avatar">张</div>
+          <div class="user-info">
+            <div class="user-name">张三</div>
+          </div>
+        </div>
+      </div>
+    </aside>
 
-<script src="js/interactions.js"></script>
-<script>
-  var agentFiles = {
-    'SOUL.md': {
-      icon: '🧠',
-      desc: '定义 AI 的核心人设、性格特征和回复风格',
-      content: '# AI 核心人设\n\n你是一个专业的技术助手，名叫 OpenClaw。\n\n## 性格特征\n- 逻辑清晰、表达简洁\n- 乐于分享知识，耐心解答问题\n- 面对不确定的问题会坦诚告知\n\n## 专业领域\n- 全栈开发（前端 Vue/React，后端 Python/Node.js）\n- 系统设计与架构\n- DevOps 和自动化\n\n## 回复风格\n- 优先使用中文\n- 代码注释用英文\n- 适当使用 Markdown 格式\n- 长回复用标题和列表分组织',
-      meta: '最后更新：2025-02-10 14:30',
-      created: true
-    },
-    'TOOLS.md': {
-      icon: '🔧',
-      desc: '指导 AI 如何正确使用各类工具和外部服务',
-      content: '# 工具使用指导\n\n## 网页搜索\n- 用于获取最新信息\n- 搜索前先判断是否需要实时数据\n- 优先搜索官方文档和权威来源\n\n## 文件操作\n- 读取文件前先确认文件存在\n- 写入文件时备份原内容\n- 大文件分段处理\n\n## 代码执行\n- 执行前检查命令安全性\n- 不执行破坏性操作（rm -rf 等）\n- 长时间运行的命令需要超时控制',
-      meta: '最后更新：2025-02-09 10:15',
-      created: true
-    },
-    'USER.md': {
-      icon: '👤',
-      desc: '记录用户的基本信息、技术栈和个人偏好',
-      content: '# 用户上下文\n\n## 基本信息\n- 姓名：张三\n- 角色：全栈开发工程师\n- 工作年限：5 年\n\n## 技术栈\n- 前端：Vue3、TypeScript、Tailwind CSS\n- 后端：Python、FastAPI、PostgreSQL\n- 运维：Docker、GitHub Actions\n\n## 偏好\n- 喜欢简洁的代码风格\n- 偏好函数式编程\n- 习惯使用 VS Code',
-      meta: '最后更新：2025-02-08 16:00',
-      created: true
-    },
-    'AGENTS.md': {
-      icon: '🤝',
-      desc: '定义多 Agent 之间的协作规则和通信协议',
-      content: '# 多 Agent 协作规则\n\n## 通信协议\n- Agent 之间通过结构化消息通信\n- 每条消息包含：发送者、接收者、类型、内容\n\n## 任务分配\n- 主 Agent 负责任务分解\n- 子 Agent 负责具体执行\n- 结果由主 Agent 汇总',
-      meta: '最后更新：2025-02-07 09:30',
-      created: true
-    },
-    'IDENTITY.md': {
-      icon: '🐾',
-      desc: '设置 AI 的名称、版本号和外部身份标识',
-      content: '# AI 身份信息\n\n- 名称：OpenClaw\n- 代号：Claw-01\n- 版本：1.0.0\n- 头像：🐾\n- 创建者：OpenClaw Team',
-      meta: '最后更新：2025-02-06 11:00',
-      created: true
-    },
-    'HEARTBEAT.md': {
-      icon: '💓',
-      desc: '配置 AI 的后台行为规则和定期检查策略',
-      content: '# 后台行为规则\n\n## 空闲时行为\n- 每 30 分钟检查一次定期任务\n- 检查文件系统变化\n- 更新内存摘要\n\n## 监控规则\n- 监听新消息通知\n- 定期任务到期提醒\n- 系统资源使用告警',
-      meta: '最后更新：2025-02-05 14:20',
-      created: true
-    },
-    'BOOTSTRAP.md': {
-      icon: '🚀',
-      desc: '定义 AI 启动时的初始化流程和加载顺序',
-      content: '',
-      meta: '未创建',
-      created: false
-    },
-    'MEMORY.md': {
-      icon: '💾',
-      desc: '管理 AI 的长期记忆存储和上下文摘要',
-      content: '',
-      meta: '未创建',
-      created: false
+    <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-title">
+          <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+          <span>设置</span>
+        </div>
+      </div>
+
+      <div class="tab-container" style="flex:1;overflow-y:auto;">
+        <div class="tab-bar">
+          <button class="tab-btn" onclick="window.location.href='settings.html'">个人设置</button>
+          <button class="tab-btn active" onclick="window.location.href='settings-files.html'">Agent 文件</button>
+          <button class="tab-btn" onclick="window.location.href='settings-skills.html'">Agent 技能</button>
+          <div class="tab-indicator" id="tabIndicator"></div>
+        </div>
+
+        <div class="settings-container settings-container--wide">
+          <div class="agent-files-layout" id="agentFilesLayout">
+            <!-- File list -->
+            <div class="agent-file-list" id="fileList">
+              <!-- Rendered by JS -->
+            </div>
+
+            <!-- Editor -->
+            <div class="agent-file-editor">
+              <div class="agent-file-editor-header">
+                <div>
+                  <div class="file-title" id="editorTitle">SOUL.md</div>
+                  <div class="file-meta" id="editorMeta">最后更新：2025-02-10 14:30</div>
+                </div>
+                <button class="preview-toggle" id="previewBtn" onclick="togglePreview()">👁 预览</button>
+              </div>
+              <div class="agent-file-desc" id="editorDesc">定义 AI 的核心人设、性格特征和回复风格</div>
+              <div class="agent-file-preview md-content" id="previewArea"></div>
+              <textarea class="agent-file-textarea" id="editorArea" spellcheck="false" oninput="updateCharCount()"></textarea>
+              <div class="char-count-bar" id="charCountBar">
+                <span class="char-count-text" id="charCountText">0 / 20,000 字符</span>
+                <span class="char-count-warn" id="charCountWarn">超出部分将不会注入上下文</span>
+              </div>
+              <div class="agent-file-actions">
+                <button class="btn btn-secondary" onclick="resetFile()">重置</button>
+                <button class="btn btn-primary" onclick="saveAgentFile()">保存</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/interactions.js"></script>
+  <script>
+    var agentFiles = {
+      'SOUL.md': {
+        icon: '🧠',
+        desc: '定义 AI 的核心人设、性格特征和回复风格',
+        content: '# AI 核心人设\n\n你是一个专业的技术助手，名叫 OpenClaw。\n\n## 性格特征\n- 逻辑清晰、表达简洁\n- 乐于分享知识，耐心解答问题\n- 面对不确定的问题会坦诚告知\n\n## 专业领域\n- 全栈开发（前端 Vue/React，后端 Python/Node.js）\n- 系统设计与架构\n- DevOps 和自动化\n\n## 回复风格\n- 优先使用中文\n- 代码注释用英文\n- 适当使用 Markdown 格式\n- 长回复用标题和列表分组织',
+        meta: '最后更新：2025-02-10 14:30',
+        created: true
+      },
+      'TOOLS.md': {
+        icon: '🔧',
+        desc: '指导 AI 如何正确使用各类工具和外部服务',
+        content: '# 工具使用指导\n\n## 网页搜索\n- 用于获取最新信息\n- 搜索前先判断是否需要实时数据\n- 优先搜索官方文档和权威来源\n\n## 文件操作\n- 读取文件前先确认文件存在\n- 写入文件时备份原内容\n- 大文件分段处理\n\n## 代码执行\n- 执行前检查命令安全性\n- 不执行破坏性操作（rm -rf 等）\n- 长时间运行的命令需要超时控制',
+        meta: '最后更新：2025-02-09 10:15',
+        created: true
+      },
+      'USER.md': {
+        icon: '👤',
+        desc: '记录用户的基本信息、技术栈和个人偏好',
+        content: '# 用户上下文\n\n## 基本信息\n- 姓名：张三\n- 角色：全栈开发工程师\n- 工作年限：5 年\n\n## 技术栈\n- 前端：Vue3、TypeScript、Tailwind CSS\n- 后端：Python、FastAPI、PostgreSQL\n- 运维：Docker、GitHub Actions\n\n## 偏好\n- 喜欢简洁的代码风格\n- 偏好函数式编程\n- 习惯使用 VS Code',
+        meta: '最后更新：2025-02-08 16:00',
+        created: true
+      },
+      'AGENTS.md': {
+        icon: '🤝',
+        desc: '定义多 Agent 之间的协作规则和通信协议',
+        content: '# 多 Agent 协作规则\n\n## 通信协议\n- Agent 之间通过结构化消息通信\n- 每条消息包含：发送者、接收者、类型、内容\n\n## 任务分配\n- 主 Agent 负责任务分解\n- 子 Agent 负责具体执行\n- 结果由主 Agent 汇总',
+        meta: '最后更新：2025-02-07 09:30',
+        created: true
+      },
+      'IDENTITY.md': {
+        icon: '🐾',
+        desc: '设置 AI 的名称、版本号和外部身份标识',
+        content: '# AI 身份信息\n\n- 名称：OpenClaw\n- 代号：Claw-01\n- 版本：1.0.0\n- 头像：🐾\n- 创建者：OpenClaw Team',
+        meta: '最后更新：2025-02-06 11:00',
+        created: true
+      },
+      'HEARTBEAT.md': {
+        icon: '💓',
+        desc: '配置 AI 的后台行为规则和定期检查策略',
+        content: '# 后台行为规则\n\n## 空闲时行为\n- 每 30 分钟检查一次定期任务\n- 检查文件系统变化\n- 更新内存摘要\n\n## 监控规则\n- 监听新消息通知\n- 定期任务到期提醒\n- 系统资源使用告警',
+        meta: '最后更新：2025-02-05 14:20',
+        created: true
+      },
+      'BOOTSTRAP.md': {
+        icon: '🚀',
+        desc: '定义 AI 启动时的初始化流程和加载顺序',
+        content: '',
+        meta: '未创建',
+        created: false
+      },
+      'MEMORY.md': {
+        icon: '💾',
+        desc: '管理 AI 的长期记忆存储和上下文摘要',
+        content: '',
+        meta: '未创建',
+        created: false
+      }
+    };
+
+    var BOOTSTRAP_MAX_CHARS = 20000;
+    var currentFile = 'SOUL.md';
+    var originalContent = '';
+
+    function updateCharCount() {
+      var len = document.getElementById('editorArea').value.length;
+      var bar = document.getElementById('charCountBar');
+      var text = document.getElementById('charCountText');
+      var formatted = len.toLocaleString() + ' / ' + BOOTSTRAP_MAX_CHARS.toLocaleString() + ' 字符';
+      text.textContent = formatted;
+      if (len > BOOTSTRAP_MAX_CHARS) {
+        bar.classList.add('over-limit');
+      } else {
+        bar.classList.remove('over-limit');
+      }
     }
-  };
 
-  var currentFile = 'SOUL.md';
-  var originalContent = '';
+    function renderFileList() {
+      var listEl = document.getElementById('fileList');
+      listEl.innerHTML = '';
+      Object.keys(agentFiles).forEach(function (name) {
+        var file = agentFiles[name];
+        var item = document.createElement('div');
+        item.className = 'agent-file-item' + (name === currentFile ? ' active' : '') + (!file.created ? ' uncreated' : '');
+        item.innerHTML =
+          '<span style="flex-shrink:0;">' + file.icon + '</span>' +
+          '<span class="file-item-name">' + name + '</span>' +
+          (!file.created ? '<span class="badge badge-muted" style="font-size:10px;flex-shrink:0;">未创建</span>' : '');
+        item.onclick = function () { selectFile(name); };
+        listEl.appendChild(item);
+      });
+    }
 
-  function renderFileList() {
-    var listEl = document.getElementById('fileList');
-    listEl.innerHTML = '';
-    Object.keys(agentFiles).forEach(function(name) {
+    function selectFile(name) {
+      currentFile = name;
       var file = agentFiles[name];
-      var item = document.createElement('div');
-      item.className = 'agent-file-item' + (name === currentFile ? ' active' : '') + (!file.created ? ' uncreated' : '');
-      item.innerHTML =
-        '<span style="flex-shrink:0;">' + file.icon + '</span>' +
-        '<span class="file-item-name">' + name + '</span>' +
-        (!file.created ? '<span class="badge badge-muted" style="font-size:10px;flex-shrink:0;">未创建</span>' : '');
-      item.onclick = function() { selectFile(name); };
-      listEl.appendChild(item);
-    });
-  }
-
-  function selectFile(name) {
-    currentFile = name;
-    var file = agentFiles[name];
-    document.getElementById('editorTitle').textContent = file.icon + '  ' + name;
-    document.getElementById('editorMeta').textContent = file.meta;
-    document.getElementById('editorDesc').textContent = file.desc;
-    document.getElementById('editorArea').value = file.content;
-    document.getElementById('editorArea').placeholder = file.created ? '' : '在此输入 ' + name + ' 的内容...';
-    originalContent = file.content;
-    renderFileList();
-  }
-
-  function saveAgentFile() {
-    var content = document.getElementById('editorArea').value;
-    agentFiles[currentFile].content = content;
-    agentFiles[currentFile].created = true;
-    agentFiles[currentFile].meta = '最后更新：刚刚';
-    originalContent = content;
-    document.getElementById('editorMeta').textContent = '最后更新：刚刚';
-    renderFileList();
-    showToast(currentFile + ' 已保存', 'success');
-  }
-
-  function resetFile() {
-    document.getElementById('editorArea').value = originalContent;
-    showToast('已重置', 'info');
-  }
-
-  var previewMode = false;
-
-  function togglePreview() {
-    previewMode = !previewMode;
-    var btn = document.getElementById('previewBtn');
-    var textarea = document.getElementById('editorArea');
-    var preview = document.getElementById('previewArea');
-
-    if (previewMode) {
-      btn.classList.add('active');
-      btn.textContent = '✏️ 编辑';
-      preview.innerHTML = renderMarkdown(textarea.value);
-      preview.classList.add('visible');
-      textarea.classList.add('preview-hidden');
-    } else {
-      btn.classList.remove('active');
-      btn.textContent = '👁 预览';
-      preview.classList.remove('visible');
-      textarea.classList.remove('preview-hidden');
+      document.getElementById('editorTitle').textContent = file.icon + '  ' + name;
+      document.getElementById('editorMeta').textContent = file.meta;
+      document.getElementById('editorDesc').textContent = file.desc;
+      document.getElementById('editorArea').value = file.content;
+      document.getElementById('editorArea').placeholder = file.created ? '' : '在此输入 ' + name + ' 的内容...';
+      originalContent = file.content;
+      updateCharCount();
+      renderFileList();
     }
-  }
 
-  function renderMarkdown(md) {
-    if (!md) return '<p style="color:var(--text-muted);font-style:italic;">暂无内容</p>';
-    var html = md
-      // Code blocks
-      .replace(/```(\w*)\n([\s\S]*?)```/g, function(m, lang, code) {
-        return '<pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>';
-      })
-      // Headers
-      .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
-      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-      .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-      // Bold
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      // Italic
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      // Inline code
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
-      // Horizontal rule
-      .replace(/^---$/gm, '<hr>')
-      // Unordered list items
-      .replace(/^- (.+)$/gm, '<li>$1</li>')
-      // Paragraphs (double newline)
-      .replace(/\n\n/g, '</p><p>')
-      // Single newlines become <br>
-      .replace(/\n/g, '<br>');
-
-    // Wrap consecutive <li> in <ul>
-    html = html.replace(/(<li>.*?<\/li>(<br>)?)+/g, function(match) {
-      return '<ul>' + match.replace(/<br>/g, '') + '</ul>';
-    });
-
-    return '<p>' + html + '</p>';
-  }
-
-  // Init
-  renderFileList();
-  selectFile('SOUL.md');
-
-  // Tab indicator
-  setTimeout(function() {
-    var activeTab = document.querySelector('.tab-btn.active');
-    var indicator = document.getElementById('tabIndicator');
-    if (activeTab && indicator) {
-      indicator.style.left = activeTab.offsetLeft + 'px';
-      indicator.style.width = activeTab.offsetWidth + 'px';
+    function saveAgentFile() {
+      var content = document.getElementById('editorArea').value;
+      agentFiles[currentFile].content = content;
+      agentFiles[currentFile].created = true;
+      agentFiles[currentFile].meta = '最后更新：刚刚';
+      originalContent = content;
+      document.getElementById('editorMeta').textContent = '最后更新：刚刚';
+      renderFileList();
+      showToast(currentFile + ' 已保存', 'success');
     }
-  }, 50);
-</script>
+
+    function resetFile() {
+      document.getElementById('editorArea').value = originalContent;
+      updateCharCount();
+      showToast('已重置', 'info');
+    }
+
+    var previewMode = false;
+
+    function togglePreview() {
+      previewMode = !previewMode;
+      var btn = document.getElementById('previewBtn');
+      var textarea = document.getElementById('editorArea');
+      var preview = document.getElementById('previewArea');
+
+      if (previewMode) {
+        btn.classList.add('active');
+        btn.textContent = '✏️ 编辑';
+        preview.innerHTML = renderMarkdown(textarea.value);
+        preview.classList.add('visible');
+        textarea.classList.add('preview-hidden');
+      } else {
+        btn.classList.remove('active');
+        btn.textContent = '👁 预览';
+        preview.classList.remove('visible');
+        textarea.classList.remove('preview-hidden');
+      }
+    }
+
+    function renderMarkdown(md) {
+      if (!md) return '<p style="color:var(--text-muted);font-style:italic;">暂无内容</p>';
+      var html = md
+        // Code blocks
+        .replace(/```(\w*)\n([\s\S]*?)```/g, function (m, lang, code) {
+          return '<pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>';
+        })
+        // Headers
+        .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        // Bold
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        // Italic
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        // Inline code
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        // Horizontal rule
+        .replace(/^---$/gm, '<hr>')
+        // Unordered list items
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        // Paragraphs (double newline)
+        .replace(/\n\n/g, '</p><p>')
+        // Single newlines become <br>
+        .replace(/\n/g, '<br>');
+
+      // Wrap consecutive <li> in <ul>
+      html = html.replace(/(<li>.*?<\/li>(<br>)?)+/g, function (match) {
+        return '<ul>' + match.replace(/<br>/g, '') + '</ul>';
+      });
+
+      return '<p>' + html + '</p>';
+    }
+
+    // Init
+    renderFileList();
+    selectFile('SOUL.md');
+
+    // Tab indicator
+    setTimeout(function () {
+      var activeTab = document.querySelector('.tab-btn.active');
+      var indicator = document.getElementById('tabIndicator');
+      if (activeTab && indicator) {
+        indicator.style.left = activeTab.offsetLeft + 'px';
+        indicator.style.width = activeTab.offsetWidth + 'px';
+      }
+    }, 50);
+  </script>
 
 </body>
+
 </html>

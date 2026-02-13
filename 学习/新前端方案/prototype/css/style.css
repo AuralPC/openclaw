@@ -2951,6 +2951,28 @@ h4 { font-size: var(--font-size-md); }
   outline: none;
   line-height: 1.8;
 }
+.char-count-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-xl);
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+}
+.char-count-bar.over-limit .char-count-text {
+  color: var(--color-error);
+  font-weight: 600;
+}
+.char-count-warn {
+  display: none;
+  color: var(--color-error);
+  font-size: 11px;
+}
+.char-count-bar.over-limit .char-count-warn {
+  display: inline;
+}
 .agent-file-actions {
   display: flex;
   justify-content: flex-end;
